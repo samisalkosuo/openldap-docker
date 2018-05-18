@@ -4,4 +4,4 @@ ENV LDAP_ORGANISATION "The Far Away Galaxy"
 ENV LDAP_DOMAIN "farawaygalaxy.net" 
 ENV LDAP_ADMIN_PASSWORD "passw0rd"
 
-COPY users.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
+COPY usersandgroups.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
