@@ -23,50 +23,62 @@ ou: groups
 
 #user data
 dn: cn=Ayyla Secura,ou=users,dc=farawaygalaxy,dc=net
-objectclass: person
-objectclass: organizationalPerson
 objectClass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
 cn: Ayyla Secura
 sn: Secura
 mail: asecura@farawaygalaxy.net
 userpassword: passw0rd
 uid: asecura
+gidNumber: 0
+uidNumber: 1001
+homeDirectory: /home/asecura
 memberof: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
 dn: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net
-objectclass: person
-objectclass: organizationalPerson
 objectClass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
 cn: Luminara Unduli
 sn: Unduli
 mail: lunduli@farawaygalaxy.net
 userpassword: passw0rd
 uid: lunduli
+gidNumber: 0
+uidNumber: 1002
+homeDirectory: /home/lunduli
 memberof: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
 dn: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
-objectclass: person
-objectclass: organizationalPerson
 objectClass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
 cn: Jyn Erso
 sn: Erso
 mail: jerso@farawaygalaxy.net
 userpassword: passw0rd
 uid: jerso
+gidNumber: 0
+uidNumber: 1003
+homeDirectory: /home/jerso
 memberof: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
 dn: cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net
-objectclass: person
-objectclass: organizationalPerson
 objectClass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
 cn: Sabine Wren
 sn: Wren
 mail: swren@farawaygalaxy.net
 userpassword: passw0rd
 uid: swren
+gidNumber: 0
+uidNumber: 1004
+homeDirectory: /home/swren
 memberof: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 
 #add new group under groups
