@@ -40,7 +40,7 @@ See LDIF or use a LDAP admin tool to get more information about the user entries
 
 ## LDIF
 
-[This is the LDIF included in the image](users.ldif).
+[This is the LDIF included in the image](usersandgroups.ldif).
 
 
 
