@@ -22,11 +22,11 @@ ou: groups
 #add users
 
 #user data
-dn: cn=Ayyla Secura,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 objectclass: top
-cn: Ayyla Secura
+cn: Aayla Secura
 sn: Secura
 mail: asecura@farawaygalaxy.net
 userpassword: passw0rd
@@ -92,5 +92,5 @@ uniquemember: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
 dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: groupOfUniqueNames
 cn: jedi
-uniquemember: cn=Ayyla Secura,ou=users,dc=farawaygalaxy,dc=net
+uniquemember: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
 uniquemember: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net

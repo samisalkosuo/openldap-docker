@@ -2,8 +2,7 @@
 
 Quick and dirty OpenLDAP Docker container for demo purposes.
 
-Based on [osixia/docker-openldap
-](https://github.com/osixia/docker-openldap).
+Based on [osixia/docker-openldap](https://github.com/osixia/docker-openldap).
 
 ## Use case
 
@@ -33,7 +32,7 @@ Users:
 
 - ```cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net```
 - ```cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net```
-- ```cn=Ayyla Secura,ou=users,dc=farawaygalaxy,dc=net```
+- ```cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net```
 - ```cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net```
 
 See LDIF or use a LDAP admin tool to get more information about the user entries.
