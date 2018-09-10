@@ -27,23 +27,23 @@ dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: posixGroup
 cn: rebels
 gidNumber: 2000
-memberUid: swren
-memberUid: jerso
-memberUid: ebridger
+memberUid: uid=swren,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
 
 #add new group under groups
 dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: posixGroup
 cn: jedi
 gidNumber: 2001
-memberUid: asecura
-memberUid: lunduli
-memberUid: ebridger
+memberUid: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
 
 #add users
 
 #user data
-dn: cn=asecura,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Aayla Secura
@@ -57,7 +57,7 @@ uidNumber: 1001
 homeDirectory: /home/asecura
 
 #user data
-dn: cn=lunduli,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Luminara Unduli
@@ -71,7 +71,7 @@ uidNumber: 1002
 homeDirectory: /home/lunduli
 
 #user data
-dn: cn=jerso,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Jyn Erso
@@ -85,7 +85,7 @@ uidNumber: 1003
 homeDirectory: /home/jerso
 
 #user data
-dn: cn=swren,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=swren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Sabine Wren
@@ -99,7 +99,7 @@ uidNumber: 1004
 homeDirectory: /home/swren
 
 #user data
-dn: cn=ebridger,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Ezra Bridger
