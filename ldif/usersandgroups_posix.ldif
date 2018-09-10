@@ -27,18 +27,18 @@ dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: posixGroup
 cn: rebels
 gidNumber: 2000
-memberuid: swren
-memberuid: jerso
-memberuid: ebridger
+memberUid: swren
+memberUid: jerso
+memberUid: ebridger
 
 #add new group under groups
 dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: posixGroup
 cn: jedi
 gidNumber: 2001
-memberuid: asecura
-memberuid: lunduli
-memberuid: ebridger
+memberUid: asecura
+memberUid: lunduli
+memberUid: ebridger
 
 #add users
 

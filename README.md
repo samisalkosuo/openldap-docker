@@ -21,7 +21,7 @@ Or you can download/clone this repo and create and build your own image.
 
 ## Groups and users
 
-There are two groups and two users for both groups (easy to add more later).
+There are two groups and five users (easy to add more later).
 
 Groups:
 
@@ -34,8 +34,11 @@ Users:
 - ```cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net```
 - ```cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net```
 - ```cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net```
+- ```cn=Ezra Bridger,ou=users,dc=farawaygalaxy,dc=net```
 
 See LDIF or use a LDAP admin tool to get more information about the user entries.
+
+
 
 ## LDIF
 
