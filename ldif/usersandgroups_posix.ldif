@@ -43,10 +43,11 @@ memberUid: ebridger
 #add users
 
 #user data
-dn: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Aayla Secura
+givenName: Aayla
 sn: Secura
 mail: asecura@farawaygalaxy.net
 userpassword: passw0rd
@@ -56,10 +57,11 @@ uidNumber: 1001
 homeDirectory: /home/asecura
 
 #user data
-dn: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Luminara Unduli
+givenName: Luminara
 sn: Unduli
 mail: lunduli@farawaygalaxy.net
 userpassword: passw0rd
@@ -69,10 +71,11 @@ uidNumber: 1002
 homeDirectory: /home/lunduli
 
 #user data
-dn: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Jyn Erso
+givenName: Jyn
 sn: Erso
 mail: jerso@farawaygalaxy.net
 userpassword: passw0rd
@@ -82,10 +85,11 @@ uidNumber: 1003
 homeDirectory: /home/jerso
 
 #user data
-dn: cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=swren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Sabine Wren
+givenName: Sabine
 sn: Wren
 mail: swren@farawaygalaxy.net
 userpassword: passw0rd
@@ -95,10 +99,11 @@ uidNumber: 1004
 homeDirectory: /home/swren
 
 #user data
-dn: cn=Ezra Bridger,ou=users,dc=farawaygalaxy,dc=net
+dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Ezra Bridger
+givenName: Ezra
 sn: Bridger
 mail: ebridger@farawaygalaxy.net
 userpassword: passw0rd
