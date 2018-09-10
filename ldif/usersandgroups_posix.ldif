@@ -46,7 +46,7 @@ memberUid: ebridger
 dn: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-objectclass: shadowAccount
+#objectclass: shadowAccount
 cn: Aayla Secura
 sn: Secura
 mail: asecura@farawaygalaxy.net
@@ -60,7 +60,7 @@ homeDirectory: /home/asecura
 dn: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-objectclass: shadowAccount
+#objectclass: shadowAccount
 cn: Luminara Unduli
 sn: Unduli
 mail: lunduli@farawaygalaxy.net
@@ -74,7 +74,7 @@ homeDirectory: /home/lunduli
 dn: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-objectclass: shadowAccount
+#objectclass: shadowAccount
 cn: Jyn Erso
 sn: Erso
 mail: jerso@farawaygalaxy.net
@@ -88,7 +88,7 @@ homeDirectory: /home/jerso
 dn: cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-objectclass: shadowAccount
+#objectclass: shadowAccount
 cn: Sabine Wren
 sn: Wren
 mail: swren@farawaygalaxy.net
@@ -102,7 +102,7 @@ homeDirectory: /home/swren
 dn: cn=Ezra Bridger,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-objectclass: shadowAccount
+#objectclass: shadowAccount
 cn: Ezra Bridger
 sn: Bridger
 mail: ebridger@farawaygalaxy.net
