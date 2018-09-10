@@ -52,7 +52,7 @@ sn: Secura
 mail: asecura@farawaygalaxy.net
 userpassword: passw0rd
 uid: asecura
-gidNumber: 0
+gidNumber: 2001
 uidNumber: 1001
 homeDirectory: /home/asecura
 
@@ -66,7 +66,7 @@ sn: Unduli
 mail: lunduli@farawaygalaxy.net
 userpassword: passw0rd
 uid: lunduli
-gidNumber: 0
+gidNumber: 2001
 uidNumber: 1002
 homeDirectory: /home/lunduli
 
@@ -80,7 +80,7 @@ sn: Erso
 mail: jerso@farawaygalaxy.net
 userpassword: passw0rd
 uid: jerso
-gidNumber: 0
+gidNumber: 2000
 uidNumber: 1003
 homeDirectory: /home/jerso
 
@@ -94,7 +94,7 @@ sn: Wren
 mail: swren@farawaygalaxy.net
 userpassword: passw0rd
 uid: swren
-gidNumber: 0
+gidNumber: 2000
 uidNumber: 1004
 homeDirectory: /home/swren
 
@@ -108,7 +108,8 @@ sn: Bridger
 mail: ebridger@farawaygalaxy.net
 userpassword: passw0rd
 uid: ebridger
-gidNumber: 0
+gidNumber: 2001
+gidNumber: 2000
 uidNumber: 1005
 homeDirectory: /home/ebridger
 
