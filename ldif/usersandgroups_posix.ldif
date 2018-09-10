@@ -43,7 +43,7 @@ memberUid: ebridger
 #add users
 
 #user data
-dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=asecura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Aayla Secura
@@ -57,7 +57,7 @@ uidNumber: 1001
 homeDirectory: /home/asecura
 
 #user data
-dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=lunduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Luminara Unduli
@@ -71,7 +71,7 @@ uidNumber: 1002
 homeDirectory: /home/lunduli
 
 #user data
-dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=jerso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Jyn Erso
@@ -85,7 +85,7 @@ uidNumber: 1003
 homeDirectory: /home/jerso
 
 #user data
-dn: uid=swren,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=swren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Sabine Wren
@@ -99,7 +99,7 @@ uidNumber: 1004
 homeDirectory: /home/swren
 
 #user data
-dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
+dn: cn=ebridger,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 cn: Ezra Bridger
