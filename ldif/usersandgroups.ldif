@@ -1,5 +1,5 @@
 #
-#Users and groups, where users and groups are top level entries.
+#Users and groups.
 #
 
 #root entry
@@ -9,11 +9,20 @@
 #dc: farawaygalaxy
 #o : farawaygalaxy
 
+#users, as organizational unit
+dn: ou=users,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: users
+
+#groups, as organizational unit
+dn: ou=groups,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: groups
 
 #add users
 
 #user data
-dn: cn=Aayla Secura,dc=farawaygalaxy,dc=net
+dn: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 objectclass: top
@@ -25,10 +34,10 @@ uid: asecura
 gidNumber: 0
 uidNumber: 1001
 homeDirectory: /home/asecura
-memberof: cn=jedi,dc=farawaygalaxy,dc=net
+memberof: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
-dn: cn=Luminara Unduli,dc=farawaygalaxy,dc=net
+dn: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 objectclass: top
@@ -40,10 +49,10 @@ uid: lunduli
 gidNumber: 0
 uidNumber: 1002
 homeDirectory: /home/lunduli
-memberof: cn=jedi,dc=farawaygalaxy,dc=net
+memberof: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
-dn: cn=Jyn Erso,dc=farawaygalaxy,dc=net
+dn: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 objectclass: top
@@ -55,10 +64,10 @@ uid: jerso
 gidNumber: 0
 uidNumber: 1003
 homeDirectory: /home/jerso
-memberof: cn=rebels,dc=farawaygalaxy,dc=net
+memberof: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 
 #user data
-dn: cn=Sabine Wren,dc=farawaygalaxy,dc=net
+dn: cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
 objectclass: top
@@ -70,18 +79,18 @@ uid: swren
 gidNumber: 0
 uidNumber: 1004
 homeDirectory: /home/swren
-memberof: cn=rebels,dc=farawaygalaxy,dc=net
+memberof: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 
 #add new group under groups
-dn: cn=rebels,dc=farawaygalaxy,dc=net
+dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: groupOfUniqueNames
 cn: rebels
-uniquemember: cn=Sabine Wren,dc=farawaygalaxy,dc=net
-uniquemember: cn=Jyn Erso,dc=farawaygalaxy,dc=net
+uniquemember: cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net
+uniquemember: cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net
 
 #add new group under groups
-dn: cn=jedi,dc=farawaygalaxy,dc=net
+dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: groupOfUniqueNames
 cn: jedi
-uniquemember: cn=Aayla Secura,dc=farawaygalaxy,dc=net
-uniquemember: cn=Luminara Unduli,dc=farawaygalaxy,dc=net
+uniquemember: cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net
+uniquemember: cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net
