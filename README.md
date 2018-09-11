@@ -1,4 +1,4 @@
-# openldap-docker
+# OpenLDAP demo container
 
 Quick and dirty OpenLDAP Docker container for demo purposes.
 
@@ -38,11 +38,38 @@ Users:
 
 See LDIF or use a LDAP admin tool to get more information about the user entries.
 
+## LDAP connection and filters
 
+Some applications ask for LDAP connection and filters. If using this OpenLDAP demo, here are the filters that should work:
+
+| Filter        | Value        |
+| ------------- |------------- |
+| URL           | ```ldap://server.ip:389``` |
+| Base DN       | ```dc=farawaygalaxy,dc=net``` |
+| Bind DN | ```cn=admin,dc=farawaygalaxy,dc=net``` |
+| Admin password | ```passw0rd``` |
+| Group filter   | ```(&(cn=%v)(objectclass=posixGroup))``` |
+| User filter   | ```(&(uid=%v)(objectclass=inetOrgPerson))``` |
+| Group ID map   | ```*:cn``` |
+| User ID map   | ```*:uid``` |
+| Group member ID map   | ```posixGroup:memberUid``` |
+
+
+## Note
+
+I used [LDAP Admin](http://www.ldapadmin.org/) and noticed that when using [usersandgroups_posix.ldif](ldif/usersandgroups_posix.ldif), user membership in groups are not shown
+
+![groups_invisble](images/group_invisible.png)
+
+However, when using [usersandgroups_posix_2.ldif](ldif/usersandgroups_posix.ldif), LDAP Admin does show user memberships
+
+![groups_visble](images/group_visible.png)
+
+The first LDIF, [usersandgroups_posix.ldif](ldif/usersandgroups_posix.ldif), is used in Dockerfile. 
 
 ## LDIF
 
-[This is the LDIF included in the image](usersandgroups.ldif).
+[This is the LDIF included in the image](ldif/usersandgroups_posix.ldif).
 
 
 
