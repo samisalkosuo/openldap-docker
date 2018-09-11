@@ -1,0 +1,114 @@
+#
+# Users and groups, where users and groups are top level entries.
+#
+# Following posix users and posix groups
+# As an example, see here: http://systhread.net/texts/201504openldap-server.php
+# 
+
+#root entry
+#dn: dc=farawaygalaxy,dc=net
+#objectClass: dcObject
+#objectClass: organization
+#dc: farawaygalaxy
+#o : farawaygalaxy
+
+#users, as organizational unit
+dn: ou=users,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: users
+
+#groups, as organizational unit
+dn: ou=groups,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: groups
+
+#add new group under groups
+dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
+objectclass: posixGroup
+cn: rebels
+gidNumber: 2000
+memberUid: swren
+memberUid: jerso
+memberUid: ebridger
+
+#add new group under groups
+dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
+objectclass: posixGroup
+cn: jedi
+gidNumber: 2001
+memberUid: asecura
+memberUid: lunduli
+memberUid: ebridger
+
+#add users
+
+#user data
+dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Aayla Secura
+givenName: Aayla
+sn: Secura
+mail: asecura@farawaygalaxy.net
+userpassword: passw0rd
+uid: asecura
+gidNumber: 0
+uidNumber: 1001
+homeDirectory: /home/asecura
+
+#user data
+dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Luminara Unduli
+givenName: Luminara
+sn: Unduli
+mail: lunduli@farawaygalaxy.net
+userpassword: passw0rd
+uid: lunduli
+gidNumber: 0
+uidNumber: 1002
+homeDirectory: /home/lunduli
+
+#user data
+dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Jyn Erso
+givenName: Jyn
+sn: Erso
+mail: jerso@farawaygalaxy.net
+userpassword: passw0rd
+uid: jerso
+gidNumber: 0
+uidNumber: 1003
+homeDirectory: /home/jerso
+
+#user data
+dn: uid=swren,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Sabine Wren
+givenName: Sabine
+sn: Wren
+mail: swren@farawaygalaxy.net
+userpassword: passw0rd
+uid: swren
+gidNumber: 0
+uidNumber: 1004
+homeDirectory: /home/swren
+
+#user data
+dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Ezra Bridger
+givenName: Ezra
+sn: Bridger
+mail: ebridger@farawaygalaxy.net
+userpassword: passw0rd
+uid: ebridger
+gidNumber: 0
+uidNumber: 1005
+homeDirectory: /home/ebridger
+
