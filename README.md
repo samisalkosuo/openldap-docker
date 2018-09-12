@@ -71,5 +71,7 @@ The first LDIF, [usersandgroups_posix.ldif](ldif/usersandgroups_posix.ldif), is 
 
 [This is the LDIF included in the image](ldif/usersandgroups_posix.ldif).
 
+[This is the LDIF uses different memberuid value](ldif/usersandgroups_posix_2.ldif).
 
+[This was the first LDIF used](ldif/usersandgroups.ldif).
 
