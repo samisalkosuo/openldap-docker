@@ -54,6 +54,15 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 | User ID map   | ```*:uid``` |
 | Group member ID map   | ```posixGroup:memberUid``` |
 
+## Create your own demo image
+
+Two files:
+
+- [directory.ini](directory.ini)
+- [createLDIFAndDockerfile.py](createLDIFAndDockerfile.py)
+
+are used to create a custom OpenLDAP image. The directory structure is described in *directory.ini* file and Python script *createLDIFAndDockerfile.py* creates LDIF-file and Dockerfile.
+
 
 ## Note
 
