@@ -1,4 +1,4 @@
-FROM osixia/openldap:1.2.1
+FROM osixia/openldap:1.2.3
 
 ENV LDAP_ORGANISATION "The Far Away Galaxy"
 ENV LDAP_DOMAIN "farawaygalaxy.net" 
