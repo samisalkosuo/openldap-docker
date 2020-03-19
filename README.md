@@ -63,6 +63,9 @@ Two files:
 
 are used to create a custom OpenLDAP image. The directory structure is described in *directory.ini* file and Python script *createLDIFAndDockerfile.py* creates LDIF-file and Dockerfile.
 
+## Scripts
+
+The directory *scripts* includes some scripts that can be used to search LDAP by userid, last name and others.
 
 ## Note
 
