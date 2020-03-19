@@ -88,6 +88,11 @@ for group in sections:
 #create users
 uidNumber=1001
 for username in getUsers():
+    userPassword = defaultPassword
+    if username.find(":") > -1:
+        usernameAndPassword = username.split(":")
+        username = usernameAndPassword[0]
+        userPassword = usernameAndPassword[1]
     uid = getUid(username)
     ldif("#user: %s" % username)
     ldif("dn: uid=%s,ou=users,%s" % (uid,dcName))
@@ -97,7 +102,7 @@ for username in getUsers():
     ldif("givenName: %s" % username.split()[0])
     ldif("sn: %s" % username.split()[1])
     ldif("mail: %s@%s" % (uid,domain))
-    ldif("userpassword: %s" % defaultPassword)
+    ldif("userpassword: %s" % userPassword)
     ldif("uid: %s" % uid)
     ldif("gidNumber: 0")
     ldif("uidNumber: %d" % uidNumber)
