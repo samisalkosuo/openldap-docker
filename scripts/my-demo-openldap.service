@@ -1,0 +1,31 @@
+# Demo service file to be used with systemctl and Podman
+#
+# - Install Podman https://podman.io/.
+# - Build your own demo OpenLDAP image.
+# - Modify this service file:
+#   - Change description.
+#   - Change image and container name in ExecStart.
+# - Copy this file to /etc/systemd/system/.
+# - Start demo OpenLDAP:
+#   - systemctl start my-demo-openldap
+# - Stop demo OpenLDAP:
+#   - systemctl stop my-demo-openldap
+# - Enable demo OpenLDAP to start automatically after boot:
+#   - systemctl enable my-demo-openldap
+# - Disable automatic start:
+#   - systemctl disable my-demo-openldap
+#
+[Unit]
+Description=My Demo OpenLDAP Podman Container
+
+[Service]
+Restart=on-failure
+ExecStartPre=/usr/bin/rm -f /%t/%n-pid /%t/%n-cid
+ExecStart=/usr/bin/podman run --conmon-pidfile  /%t/%n-pid  --cidfile /%t/%n-cid --name my-demo-openldap -p 389:389 -d localhost/my-demo-openldap:latest
+ExecStop=/usr/bin/sh -c "/usr/bin/podman rm -f `cat /%t/%n-cid`"
+KillMode=none
+Type=forking
+PIDFile=/%t/%n-pid
+
+[Install]
+WantedBy=multi-user.target
