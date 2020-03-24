@@ -1,16 +1,15 @@
-#
-# Users and groups, where users and groups are top level entries.
-#
-# Following posix users and posix groups
-# As an example, see here: http://systhread.net/texts/201504openldap-server.php
-# 
+# Generated LDIF file
 
-#root entry
-#dn: dc=farawaygalaxy,dc=net
-#objectClass: dcObject
-#objectClass: organization
-#dc: farawaygalaxy
-#o : farawaygalaxy
+# Following posix users and posix groups.
+
+# Users and groups, where users and groups are top level entries.
+
+# root entry
+#  dn: dc=farawaygalaxy,dc=net
+#  objectClass: dcObject
+#  objectClass: organization
+#  dc: farawaygalaxy
+#  o : farawaygalaxy
 
 #users, as organizational unit
 dn: ou=users,dc=farawaygalaxy,dc=net
@@ -22,41 +21,34 @@ dn: ou=groups,dc=farawaygalaxy,dc=net
 objectClass: organizationalUnit
 ou: groups
 
-#add new group under groups
-dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
-objectclass: posixGroup
-cn: rebels
-gidNumber: 2000
-memberUid: uid=swren,ou=users,dc=farawaygalaxy,dc=net
-memberUid: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
-memberUid: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
-
-#add new group under groups
+#group: jedi
 dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
 objectclass: posixGroup
 cn: jedi
 gidNumber: 2001
-memberUid: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
 memberUid: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
-memberUid: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=ebridger:phoenix,ou=users,dc=farawaygalaxy,dc=net
 
-#add users
+#group: rebels
+dn: cn=rebels,ou=groups,dc=farawaygalaxy,dc=net
+objectclass: posixGroup
+cn: rebels
+gidNumber: 2002
+memberUid: uid=ebridger:phoenix,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=swren,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
 
-#user data
-dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
-objectClass: inetOrgPerson
-objectclass: posixAccount
-cn: Aayla Secura
-givenName: Aayla
-sn: Secura
-mail: asecura@farawaygalaxy.net
-userpassword: passw0rd
-uid: asecura
-gidNumber: 0
-uidNumber: 1001
-homeDirectory: /home/asecura
+#group: empire
+dn: cn=empire,ou=groups,dc=farawaygalaxy,dc=net
+objectclass: posixGroup
+cn: empire
+gidNumber: 2003
+memberUid: uid=wtarkin:moff,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=okrennic:director,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=gsaxon,ou=users,dc=farawaygalaxy,dc=net
 
-#user data
+#user: Luminara Unduli
 dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
@@ -67,24 +59,38 @@ mail: lunduli@farawaygalaxy.net
 userpassword: passw0rd
 uid: lunduli
 gidNumber: 0
-uidNumber: 1002
+uidNumber: 1001
 homeDirectory: /home/lunduli
 
-#user data
-dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
+#user: Aayla Secura
+dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-cn: Jyn Erso
-givenName: Jyn
-sn: Erso
-mail: jerso@farawaygalaxy.net
+cn: Aayla Secura
+givenName: Aayla
+sn: Secura
+mail: asecura@farawaygalaxy.net
 userpassword: passw0rd
-uid: jerso
+uid: asecura
+gidNumber: 0
+uidNumber: 1002
+homeDirectory: /home/asecura
+
+#user: Ezra Bridger
+dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Ezra Bridger
+givenName: Ezra
+sn: Bridger
+mail: ebridger@farawaygalaxy.net
+userpassword: phoenix
+uid: ebridger
 gidNumber: 0
 uidNumber: 1003
-homeDirectory: /home/jerso
+homeDirectory: /home/ebridger
 
-#user data
+#user: Sabine Wren
 dn: uid=swren,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
@@ -98,17 +104,59 @@ gidNumber: 0
 uidNumber: 1004
 homeDirectory: /home/swren
 
-#user data
-dn: uid=ebridger,ou=users,dc=farawaygalaxy,dc=net
+#user: Jyn Erso
+dn: uid=jerso,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
 objectclass: posixAccount
-cn: Ezra Bridger
-givenName: Ezra
-sn: Bridger
-mail: ebridger@farawaygalaxy.net
+cn: Jyn Erso
+givenName: Jyn
+sn: Erso
+mail: jerso@farawaygalaxy.net
 userpassword: passw0rd
-uid: ebridger
+uid: jerso
 gidNumber: 0
 uidNumber: 1005
-homeDirectory: /home/ebridger
+homeDirectory: /home/jerso
+
+#user: Wilhuff Tarkin
+dn: uid=wtarkin,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Wilhuff Tarkin
+givenName: Wilhuff
+sn: Tarkin
+mail: wtarkin@farawaygalaxy.net
+userpassword: moff
+uid: wtarkin
+gidNumber: 0
+uidNumber: 1006
+homeDirectory: /home/wtarkin
+
+#user: Orson Krennic
+dn: uid=okrennic,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Orson Krennic
+givenName: Orson
+sn: Krennic
+mail: okrennic@farawaygalaxy.net
+userpassword: director
+uid: okrennic
+gidNumber: 0
+uidNumber: 1007
+homeDirectory: /home/okrennic
+
+#user: Gar Saxon
+dn: uid=gsaxon,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Gar Saxon
+givenName: Gar
+sn: Saxon
+mail: gsaxon@farawaygalaxy.net
+userpassword: passw0rd
+uid: gsaxon
+gidNumber: 0
+uidNumber: 1008
+homeDirectory: /home/gsaxon
 

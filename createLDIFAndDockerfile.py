@@ -33,15 +33,23 @@ def ldif(line,emptyLine=False):
     if emptyLine == True:
         print("",file=ldifFile)
 
+ldif("# Generated LDIF file",emptyLine=True)
+ldif("# Following posix users and posix groups.",emptyLine=True)
+ldif("# Users and groups, where users and groups are top level entries.",emptyLine=True)
 
-ldif("#Generated LDIF file",emptyLine=True)
+ldif("# root entry")
+ldif("#  dn: dc=farawaygalaxy,dc=net")
+ldif("#  objectClass: dcObject")
+ldif("#  objectClass: organization")
+ldif("#  dc: farawaygalaxy")
+ldif("#  o : farawaygalaxy",emptyLine=True)
 
 #create ous in LDIF
-ldif("#users as organizational unit")
+ldif("#users, as organizational unit")
 ldif("dn: ou=users,%s" % dcName)
 ldif("objectClass: organizationalUnit")
 ldif("ou: users",emptyLine=True)
-ldif("#groups as organizational unit")
+ldif("#groups, as organizational unit")
 ldif("dn: ou=groups,%s" % dcName)
 ldif("objectClass: organizationalUnit")
 ldif("ou: groups",emptyLine=True)
@@ -118,6 +126,7 @@ print("FROM %s" % config['globalsettings']['dockerImageBase'],file=dockerFile)
 print("ENV LDAP_ORGANISATION \"%s\"" % config['globalsettings']['organization'],file=dockerFile)
 print("ENV LDAP_DOMAIN \"%s\"" % domain,file=dockerFile)
 print("ENV LDAP_ADMIN_PASSWORD \"%s\"" % config['globalsettings']['adminPassword'],file=dockerFile)
+print("ENV LDAP_TLS false",file=dockerFile)
 print("COPY %s /container/service/slapd/assets/config/bootstrap/ldif/custom/" % ldifFileName,file=dockerFile)
 
 dockerFile.close()
