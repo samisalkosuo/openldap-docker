@@ -21,20 +21,24 @@ Or you can download/clone this repo and create and build your own image.
 
 ## Groups and users
 
-There are two groups and five users (easy to add more later).
+There are three groups and eight users (easy to add more later).
 
 Groups:
 
 - ```cn=rebels,ou=groups,dc=farawaygalaxy,dc=net```
 - ```cn=jedi,ou=groups,dc=farawaygalaxy,dc=net```
+- ```cn=empire,ou=groups,dc=farawaygalaxy,dc=net```
 
 Users:
 
-- ```cn=Sabine Wren,ou=users,dc=farawaygalaxy,dc=net```
-- ```cn=Jyn Erso,ou=users,dc=farawaygalaxy,dc=net```
-- ```cn=Aayla Secura,ou=users,dc=farawaygalaxy,dc=net```
-- ```cn=Luminara Unduli,ou=users,dc=farawaygalaxy,dc=net```
-- ```cn=Ezra Bridger,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=swren,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=jerso,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=asecura,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=lunduli,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=ebridger,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=wtarkin,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=okrennic,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=gsaxon,ou=users,dc=farawaygalaxy,dc=net```
 
 See LDIF or use a LDAP admin tool to get more information about the user entries.
 
