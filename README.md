@@ -60,12 +60,13 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 
 ## Create your own demo image
 
-Two files:
+In order to create your own OpenLDAP image with your users, you can add users and groups to [directory.ini](directory.ini) and use [Containerfile](Containerfile) to build new OpenLDAP image.
 
-- [directory.ini](directory.ini)
-- [createLDIFAndDockerfile.py](createLDIFAndDockerfile.py)
-
-are used to create a custom OpenLDAP image. The directory structure is described in *directory.ini* file and Python script *createLDIFAndDockerfile.py* creates LDIF-file and Dockerfile.
+- Edit [directory.ini](directory.ini).
+- Build image:
+  - `docker build -t my-openldap -f Containerfile .`
+- Start:
+  - `docker run -it --rm my-openldap`
 
 ## Scripts
 
@@ -85,7 +86,7 @@ The first LDIF, [usersandgroups_posix.ldif](ldif/usersandgroups_posix.ldif), is 
 
 ## LDIF
 
-[This is the LDIF included in the image](ldif/usersandgroups_posix.ldif).
+[This is the LDIF included in the Dockerhub image](ldif/usersandgroups_posix.ldif).
 
 [This LDIF uses different memberuid value](ldif/usersandgroups_posix_2.ldif).
 
