@@ -70,7 +70,7 @@ In order to create your own OpenLDAP image with your users, you can add users an
 
 ## Scripts
 
-The directory *scripts* includes some scripts that can be used to search LDAP by userid, last name and others.
+The directory *scripts* includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.
 
 ## Note
 
