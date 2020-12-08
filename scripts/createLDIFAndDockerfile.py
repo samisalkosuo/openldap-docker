@@ -131,7 +131,7 @@ print("COPY %s /container/service/slapd/assets/config/bootstrap/ldif/custom/" % 
 
 dockerFile.close()
 
-print("LDIF and Docker file created")
-print()
-print("Build new image using:")
-print("docker build -t myopenldap -f Dockerfile.generated .")
+# print("LDIF and Docker file created")
+# print()
+# print("Build new image using:")
+# print("docker build -t myopenldap -f Dockerfile.generated .")
