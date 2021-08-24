@@ -48,6 +48,15 @@ memberUid: uid=wtarkin:moff,ou=users,dc=farawaygalaxy,dc=net
 memberUid: uid=okrennic:director,ou=users,dc=farawaygalaxy,dc=net
 memberUid: uid=gsaxon,ou=users,dc=farawaygalaxy,dc=net
 
+#group: sith
+dn: cn=sith,ou=groups,dc=farawaygalaxy,dc=net
+objectclass: posixGroup
+cn: sith
+gidNumber: 2004
+memberUid: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+memberUid: uid=dmaul,ou=users,dc=farawaygalaxy,dc=net
+
 #user: Luminara Unduli
 dn: uid=lunduli,ou=users,dc=farawaygalaxy,dc=net
 objectClass: inetOrgPerson
@@ -159,4 +168,46 @@ uid: gsaxon
 gidNumber: 0
 uidNumber: 1008
 homeDirectory: /home/gsaxon
+
+#user: Darth Vader
+dn: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Darth Vader
+givenName: Darth
+sn: Vader
+mail: dvader@farawaygalaxy.net
+userpassword: passw0rd
+uid: dvader
+gidNumber: 0
+uidNumber: 1009
+homeDirectory: /home/dvader
+
+#user: Count Dooku
+dn: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Count Dooku
+givenName: Count
+sn: Dooku
+mail: cdooku@farawaygalaxy.net
+userpassword: passw0rd
+uid: cdooku
+gidNumber: 0
+uidNumber: 1010
+homeDirectory: /home/cdooku
+
+#user: Darth Maul
+dn: uid=dmaul,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+objectclass: posixAccount
+cn: Darth Maul
+givenName: Darth
+sn: Maul
+mail: dmaul@farawaygalaxy.net
+userpassword: passw0rd
+uid: dmaul
+gidNumber: 0
+uidNumber: 1011
+homeDirectory: /home/dmaul
 

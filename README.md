@@ -21,13 +21,14 @@ Or you can download/clone this repo and create and build your own image.
 
 ## Groups and users
 
-There are three groups and eight users (easy to add more later).
+There are 4 groups and 11 users (easy to add more later).
 
 Groups:
 
 - ```cn=rebels,ou=groups,dc=farawaygalaxy,dc=net```
 - ```cn=jedi,ou=groups,dc=farawaygalaxy,dc=net```
 - ```cn=empire,ou=groups,dc=farawaygalaxy,dc=net```
+- ```cn=sith,ou=groups,dc=farawaygalaxy,dc=net```
 
 Users:
 
@@ -39,6 +40,9 @@ Users:
 - ```uid=wtarkin,ou=users,dc=farawaygalaxy,dc=net```
 - ```uid=okrennic,ou=users,dc=farawaygalaxy,dc=net```
 - ```uid=gsaxon,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=dvader,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=cdooku,ou=users,dc=farawaygalaxy,dc=net```
+- ```uid=dmaul,ou=users,dc=farawaygalaxy,dc=net```
 
 See LDIF or use a LDAP admin tool to get more information about the user entries.
 
