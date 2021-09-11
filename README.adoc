@@ -33,6 +33,8 @@ And one user in that group is :
 
 - `uid=dvader,ou=users,dc=farawaygalaxy,dc=net`
 
+The default password for all users is `passw0rd`. Another password can be set in link:directory.ini[directory.ini].
+
 See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
 
 == LDAP connection and filters
