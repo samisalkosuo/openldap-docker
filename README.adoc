@@ -1,0 +1,88 @@
+= OpenLDAP demo container
+
+Quick and dirty OpenLDAP Docker container for demo purposes.
+
+Based on https://github.com/osixia/docker-openldap[osixia/docker-openldap].
+
+== Use case
+
+Occasionally I have a need to have LDAP server with groups and users. That's why this image exists. No installations, no setup, just run and use.
+
+== Usage
+
+* Get Docker image: 
+** `docker pull kazhar/openldap-demo`
+* Run Docker image: 
+** `docker run -d -p 389:389 -p 636:636 kazhar/openldap-demo`
+* Login to server:
+** Base DN: `dc=farawaygalaxy,dc=net`
+** Admin user: `cn=admin,dc=farawaygalaxy,dc=net`
+** Password: `passw0rd`
+
+Or you can download/clone this repo and create and build your own image.
+
+== Groups and users
+
+Groups and users are specified in link:directory.ini[directory.ini]-file. When building container, LDIF file is generated. See the link:sample.ldif[sample.ldif].
+
+One group is:
+
+- `cn=sith,ou=groups,dc=farawaygalaxy,dc=net`
+
+And one user in that group is :
+
+- `uid=dvader,ou=users,dc=farawaygalaxy,dc=net`
+
+See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
+
+== LDAP connection and filters
+
+Some applications ask for LDAP connection and filters. If using this OpenLDAP demo, here are the settings and filters that should work:
+
+|===
+|Setting |Value
+
+|URL
+|`ldap://server.ip:389`
+
+|Base DN
+|`dc=farawaygalaxy,dc=net`
+
+|Bind DN
+|`cn=admin,dc=farawaygalaxy,dc=net`
+
+|Admin password
+|`passw0rd`
+
+|User filter
+|`(&(uid=%v)(objectclass=inetOrgPerson))`
+
+|Group filter
+|`(&(cn=%v)(objectclass=groupOfUniqueNames))`
+
+|User ID map
+|`*:uid`
+
+|Group ID map
+|`*:cn`
+
+|Group member ID map 
+|`groupOfUniqueNames:uniqueMember`
+
+|===
+
+== Create your own demo image
+
+In order to create your own OpenLDAP image with your users, you can add users and groups to link:directory.ini[directory.ini] and then build a new OpenLDAP image.
+
+- Edit link:directory.ini[directory.ini].
+- Build image:
+  - `docker build -t my-openldap .`
+- Start:
+  - `docker run -it --rm -p 389:389 -p 689:689 my-openldap`
+
+== Scripts
+
+link:scripts/[scripts]-directory includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.
+
+

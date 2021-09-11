@@ -1,0 +1,63 @@
+# Generated LDIF file
+
+# root entry
+#  dn: dc=farawaygalaxy,dc=net
+#  objectClass: dcObject
+#  objectClass: organization
+#  dc: farawaygalaxy
+#  o : farawaygalaxy
+
+# users, as organizational unit
+dn: ou=users,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: users
+
+# groups, as organizational unit
+dn: ou=groups,dc=farawaygalaxy,dc=net
+objectClass: organizationalUnit
+ou: groups
+
+#user: Aayla Secura
+dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+cn: Aayla Secura
+sn: Secura
+uid: asecura
+userPassword: passw0rd
+
+#user: Mace Windu
+dn: uid=mwindu,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+cn: Mace Windu
+sn: Windu
+uid: mwindu
+userPassword: passw0rd
+
+#user: Darth Vader
+dn: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+cn: Darth Vader
+sn: Vader
+uid: dvader
+userPassword: passw0rd
+
+#user: Count Dooku
+dn: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+objectClass: inetOrgPerson
+cn: Count Dooku
+sn: Dooku
+uid: cdooku
+userPassword: passw0rd
+
+dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
+objectClass: groupOfUniqueNames
+cn: jedi
+uniqueMember: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+uniqueMember: uid=mwindu,ou=users,dc=farawaygalaxy,dc=net
+
+dn: cn=sith,ou=groups,dc=farawaygalaxy,dc=net
+objectClass: groupOfUniqueNames
+cn: sith
+uniqueMember: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
+uniqueMember: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+

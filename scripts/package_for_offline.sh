@@ -17,25 +17,37 @@ then
     fi
 fi
 
+if [[ ! -f ../directory.ini ]]
+then
+    echo "../directory.ini does not exist. Execute this script in openldap-docker/scripts-directory."
+    exit 2
+fi
 set -e
 
 echo "Packaging OpenLDAP demo files..."
 
-__tmp_dir=openldap-demo
+__dir_name=openldap-demo
+__tmp_dir=/tmp/${__dir_name}
+__images_dir=${__tmp_dir}/images
 echo "Creating directory ${__tmp_dir}..."
-mkdir -p ${__tmp_dir}/ldif
-mkdir -p ${__tmp_dir}/scripts
+mkdir -p ${__images_dir}
 
 echo "Copying files..."
-cp -R ldif/* ${__tmp_dir}/ldif/
-cp -R scripts/* ${__tmp_dir}/scripts/
-cp Containerfile Dockerfile directory.ini README* LICENSE ${__tmp_dir}/
+cp -R ../* ${__tmp_dir}/
 
+echo "Pulling images..."
+cat ../Dockerfile |grep ^FROM | uniq |awk -v cmd="${__cmd}"  '{print cmd " pull "  $2}' |sh
 echo "Saving images..."
-cat Containerfile Dockerfile |grep ^FROM | uniq |awk -v cmd="${__cmd}" -v dir="${__tmp_dir}" '{print cmd " save -o " dir "/image_" NR ".tar " $2}' |sh
+cat ../Dockerfile |grep ^FROM | uniq |awk -v cmd="${__cmd}" -v dir="${__images_dir}" '{print cmd " save -o " dir "/image_" NR ".tar " $2}' | sh
 
 echo "Tarring..."
-tar -cf ${__tmp_dir}.tar ${__tmp_dir}/
+__tar_file=${__dir_name}.tar
+cdir=$(pwd)
+cd ${__tmp_dir}
+cd ..
+tar -cf ${__tar_file} ${__dir_name}/
+mv ${__tar_file} $cdir
+cd $cdir
 rm -rf ${__tmp_dir}
-echo "Tar file: ${__tmp_dir}.tar"
+echo "Tar file: ${__tar_file}"
 echo "Packaging OpenLDAP demo files...done."
