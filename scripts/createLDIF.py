@@ -80,7 +80,7 @@ for group in groupSections:
             sn=name[0].title()
         else:
             sn=name[1].title()
-        ldif("#user: " + cn)
+        ldif("# user: " + cn)
         ldif("dn: %s" % (getDN(uid)))
         ldif("objectClass: inetOrgPerson")
         ldif("cn: " + cn)
@@ -91,6 +91,7 @@ for group in groupSections:
 
 #add groups to LDIF
 for groupName in groupSections:
+    ldif("# group: " + groupName)
     ldif("dn: cn=%s,ou=groups,%s" % (groupName,dcName))
     ldif("objectClass: groupOfUniqueNames")
     ldif("cn: " + groupName)
