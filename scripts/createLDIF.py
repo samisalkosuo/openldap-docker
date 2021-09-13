@@ -63,9 +63,12 @@ def getDN(uid):
     return "uid=%s,ou=users,%s" % (uid,dcName)
 
 #add users to LDIF
+users=[]
 for group in groupSections:
     cfg=config[group]
     for user in config.options(group):
+        if user in users:
+            break
         pwd=cfg[user]
         if pwd == "":
             pwd = defaultPassword
@@ -77,9 +80,6 @@ for group in groupSections:
             sn=name[0].title()
         else:
             sn=name[1].title()
-        print(name[0])
-        print(user)
-        print("pwd: " + pwd)
         ldif("#user: " + cn)
         ldif("dn: %s" % (getDN(uid)))
         ldif("objectClass: inetOrgPerson")
@@ -87,11 +87,10 @@ for group in groupSections:
         ldif("sn: " + sn)
         ldif("uid: " + uid)
         ldif("userPassword: " + pwd,emptyLine=True)
-
+        users.append(user)
 
 #add groups to LDIF
 for groupName in groupSections:
-    print(groupName)
     ldif("dn: cn=%s,ou=groups,%s" % (groupName,dcName))
     ldif("objectClass: groupOfUniqueNames")
     ldif("cn: " + groupName)
