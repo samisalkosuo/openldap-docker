@@ -13,7 +13,7 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 * Get Docker image: 
 ** `docker pull kazhar/openldap-demo`
 * Run Docker image: 
-** `docker run -d -p 389:389 -p 636:636 kazhar/openldap-demo`
+** `docker run -d -p 389:389 -p 636:636 --name openldap-demo kazhar/openldap-demo`
 * Login to server:
 ** Base DN: `dc=farawaygalaxy,dc=net`
 ** Admin user: `cn=admin,dc=farawaygalaxy,dc=net`
@@ -81,7 +81,7 @@ In order to create your own OpenLDAP image with your users, you can add users an
 - Build image:
   - `docker build -t my-openldap .`
 - Start:
-  - `docker run -it --rm -p 389:389 -p 689:689 my-openldap`
+  - `docker run -it --rm -p 389:389 -p 689:689 --name my-openldap my-openldap`
 
 == Scripts
 
