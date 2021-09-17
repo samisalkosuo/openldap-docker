@@ -80,13 +80,16 @@ for group in groupSections:
             sn=name[0].title()
         else:
             sn=name[1].title()
-        ldif("# user: " + cn)
-        ldif("dn: %s" % (getDN(uid)))
-        ldif("objectClass: inetOrgPerson")
-        ldif("cn: " + cn)
-        ldif("sn: " + sn)
-        ldif("uid: " + uid)
-        ldif("userPassword: " + pwd,emptyLine=True)
+        mail="%s@%s" % (uid, domain)
+        ldif("""# user: %s
+dn: %s
+objectClass: inetOrgPerson
+cn: %s
+sn: %s
+uid: %s
+mail: %s
+userPassword: %s
+""" % (cn, getDN(uid), cn, sn, uid, mail, pwd))
         users.append(user)
 
 #add groups to LDIF
