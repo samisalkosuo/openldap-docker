@@ -4,16 +4,44 @@ import sys
 import configparser
 
 config = configparser.ConfigParser(strict=False)
-config.read('directory.ini')
+config.read('config.ini')
 
 #read global settings
-domain = config['globalsettings']['domain']
-defaultPassword = config['globalsettings']['defaultPassword']
+configuration=config['globalsettings']
+domain = configuration['domain']
+defaultPassword = configuration['defaultPassword']
+
+organizationName=configuration['organization']
+organization=''
+domainParts=domain.split(".")
+organization=domainParts[0]
+organizationSuffix=domainParts[0]
 
 dcName=[]
-for domainPart in domain.split("."):
+for domainPart in domainParts:
     dcName.append("dc="+domainPart)
 dcName=",".join(dcName)
+
+#create files for certificate generation
+domainFile=open("generated_domain.txt","w")
+print(domain,file=domainFile)
+domainFile.close()
+orgFile=open("generated_org.txt","w")
+print(organizationName,file=orgFile)
+orgFile.close()
+
+#create ENV file for OpenLDAP container
+envFile=open("generated.yaml","w")
+
+print("LDAP_ORGANISATION: %s" % organizationName,file=envFile)
+print("LDAP_DOMAIN: %s" % domain,file=envFile)
+print("LDAP_ADMIN_PASSWORD: %s" % configuration['adminPassword'],file=envFile)
+print("LDAP_TLS_VERIFY_CLIENT: try",file=envFile)
+print("LDAP_LOG_LEVEL: %s" % configuration['logLevel'],file=envFile)
+
+envFile.close()
+
+#create LDIF
 
 #group sections
 groupSections = config.sections()
@@ -32,23 +60,23 @@ def ldif(line,emptyLine=False):
 ldif("""# Generated LDIF file
 
 # root entry
-#  dn: dc=farawaygalaxy,dc=net
+#  dn: %s
 #  objectClass: dcObject
 #  objectClass: organization
-#  dc: farawaygalaxy
-#  o : farawaygalaxy
+#  dc: %s
+#  o : %s
 
 # users, as organizational unit
-dn: ou=users,dc=farawaygalaxy,dc=net
+dn: ou=users,%s
 objectClass: organizationalUnit
 ou: users
 
 # groups, as organizational unit
-dn: ou=groups,dc=farawaygalaxy,dc=net
+dn: ou=groups,%s
 objectClass: organizationalUnit
 ou: groups
 
-""")
+""" % (dcName, organization, organization, dcName, dcName))
 
 def getUID(user):
     name=user.split()
@@ -62,6 +90,12 @@ def getUID(user):
 def getDN(uid):
     return "uid=%s,ou=users,%s" % (uid,dcName)
 
+import random
+numbers = "0123456789"
+letters = "eyuioaqwrtplkjhgfdszxcvbnm"
+def getRandomPassword():
+    return ''.join(random.choice(letters) for i in range(8)) + ''.join(random.choice(numbers) for i in range(2))
+
 #add users to LDIF
 users=[]
 for group in groupSections:
@@ -71,7 +105,10 @@ for group in groupSections:
             break
         pwd=cfg[user]
         if pwd == "":
-            pwd = defaultPassword
+            if defaultPassword == "RANDOM":
+                pwd = getRandomPassword()
+            else:
+                pwd = defaultPassword
         name=user.split()
         cn=user.title()
         uid=getUID(user)

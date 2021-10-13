@@ -1,4 +1,4 @@
-generated.ldif
+generated*
 Dockerfile.generated
 tmp/
 TODO*

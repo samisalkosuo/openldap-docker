@@ -1,6 +1,6 @@
 = OpenLDAP demo container
 
-Quick and dirty OpenLDAP Docker container for demo purposes.
+OpenLDAP Docker container for demo purposes.
 
 Based on https://github.com/osixia/docker-openldap[osixia/docker-openldap].
 
@@ -19,11 +19,11 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 ** Admin user: `cn=admin,dc=farawaygalaxy,dc=net`
 ** Password: `passw0rd`
 
-Or you can download/clone this repo and create and build your own image.
+Or you can download/clone this repo and create and build your own OpenLDAP image.
 
 == Groups and users
 
-Groups and users are specified in link:directory.ini[directory.ini]-file. When building container, LDIF file is generated. See the link:sample.ldif[sample.ldif].
+Groups and users are specified in link:config.ini[config.ini]-file. When building container, LDIF file is generated. See the link:sample.ldif[sample.ldif].
 
 One group is:
 
@@ -33,7 +33,7 @@ And one user in that group is :
 
 - `uid=dvader,ou=users,dc=farawaygalaxy,dc=net`
 
-The default password for all users is `passw0rd`. Another password can be set in link:directory.ini[directory.ini].
+The default password for all users is `passw0rd`. Another password can be set in link:config.ini[config.ini].
 
 See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
 
@@ -75,9 +75,9 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 
 == Create your own demo image
 
-In order to create your own OpenLDAP image with your users, you can add users and groups to link:directory.ini[directory.ini] and then build a new OpenLDAP image.
+In order to create your own OpenLDAP image with custom domain and users, edit link:config.ini[config.ini] and then build a new OpenLDAP image.
 
-- Edit link:directory.ini[directory.ini].
+- Edit link:config.ini[config.ini].
 - Build image:
   - `docker build -t my-openldap .`
 - Start:
