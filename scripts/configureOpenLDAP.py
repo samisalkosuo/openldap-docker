@@ -1,7 +1,7 @@
 #create LDIF file from directory.ini
 
-import sys
 import configparser
+import random
 
 config = configparser.ConfigParser(strict=False)
 config.read('config.ini')
@@ -33,11 +33,18 @@ orgFile.close()
 #create ENV file for OpenLDAP container
 envFile=open("generated.yaml","w")
 
-print("LDAP_ORGANISATION: %s" % organizationName,file=envFile)
-print("LDAP_DOMAIN: %s" % domain,file=envFile)
-print("LDAP_ADMIN_PASSWORD: %s" % configuration['adminPassword'],file=envFile)
-print("LDAP_TLS_VERIFY_CLIENT: try",file=envFile)
-print("LDAP_LOG_LEVEL: %s" % configuration['logLevel'],file=envFile)
+print("""#OpenLDAP environment variables
+LDAP_ORGANISATION: %s
+LDAP_DOMAIN: %s
+LDAP_ADMIN_PASSWORD: %s
+LDAP_LOG_LEVEL: %s
+LDAP_TLS_VERIFY_CLIENT: try
+""" % (organizationName, 
+    domain,
+    configuration['adminPassword'],
+    configuration['logLevel']
+    ),
+    file=envFile)
 
 envFile.close()
 
@@ -95,7 +102,6 @@ def getUID(user):
 def getDN(uid):
     return "uid=%s,ou=users,%s" % (uid,dcName)
 
-import random
 numbers = "0123456789"
 letters = "eyuioaqwrtplkjhgfdszxcvbnm"
 def getRandomPassword():
