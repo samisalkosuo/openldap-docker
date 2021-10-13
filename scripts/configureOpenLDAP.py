@@ -85,6 +85,11 @@ def getUID(user):
         uid=name[0]
     else:
         uid=name[0][0]+name[1]
+    #replace non ascii characters
+    uid = uid.replace("ö","o")
+    uid = uid.replace("ä","a")
+    uid = uid.replace("å","a")
+    uid = uid.replace("ü","u")
     return uid
 
 def getDN(uid):
