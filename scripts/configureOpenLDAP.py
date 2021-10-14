@@ -103,7 +103,7 @@ def getDN(uid):
     return "uid=%s,ou=users,%s" % (uid,dcName)
 
 numbers = "0123456789"
-letters = "eyuioaqwrtplkjhgfdszxcvbnm"
+letters = "eyuioaqwrtplkjhgfdszxcvbnmPOIUYTREWQASDFGHJKLMNBVCXZ"
 def getRandomPassword():
     return ''.join(random.choice(letters) for i in range(8)) + ''.join(random.choice(numbers) for i in range(2))
 
