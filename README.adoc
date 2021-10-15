@@ -15,23 +15,23 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 * Run Docker image: 
 ** `docker run -d -p 389:389 -p 636:636 --name openldap-demo kazhar/openldap-demo`
 * Login to server:
-** Base DN: `dc=farawaygalaxy,dc=net`
-** Admin user: `cn=admin,dc=farawaygalaxy,dc=net`
+** Base DN: `dc=sirius,dc=com`
+** Admin user: `cn=admin,dc=sirius,dc=com`
 ** Password: `passw0rd`
 
 Or you can download/clone this repo and create and build your own OpenLDAP image.
 
 == Groups and users
 
-Groups and users are specified in link:config.ini[config.ini]-file. When building container, LDIF file is generated. See the link:sample.ldif[sample.ldif].
+Groups and users are specified in link:config.ini[config.ini]-file. When building container, LDIF file is generated (much like link:sample.ldif[sample.ldif]).
 
 One group is:
 
-- `cn=sith,ou=groups,dc=farawaygalaxy,dc=net`
+- `cn=admin,ou=groups,dc=sirius,dc=com`
 
 And one user in that group is :
 
-- `uid=dvader,ou=users,dc=farawaygalaxy,dc=net`
+- `uid=kdoyle,ou=users,dc=sirius,dc=com`
 
 The default password for all users is `passw0rd`. Another password can be set in link:config.ini[config.ini].
 
@@ -48,10 +48,10 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 |`ldap://server.ip:389`
 
 |Base DN
-|`dc=farawaygalaxy,dc=net`
+|`dc=sirius,dc=com`
 
 |Bind DN
-|`cn=admin,dc=farawaygalaxy,dc=net`
+|`cn=admin,dc=sirius,dc=com`
 
 |Admin password
 |`passw0rd`
@@ -62,14 +62,14 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 |Group filter
 |`(&(cn=%v)(objectclass=groupOfUniqueNames))`
 
+|Group member ID map 
+|`groupOfUniqueNames:uniqueMember`
+
 |User ID map
 |`*:uid`
 
 |Group ID map
 |`*:cn`
-
-|Group member ID map 
-|`groupOfUniqueNames:uniqueMember`
 
 |===
 
