@@ -14,8 +14,8 @@ FROM docker.io/alpine/openssl as certbuild
 
 WORKDIR /cert
 
-COPY --from=build /config/generated*.txt .
-COPY certs/* .
+COPY --from=build /config/generated*.txt ./
+COPY certs/* ./
 RUN DOMAIN=$(cat generated_domain.txt) && ORGANIZATION="$(cat generated_org.txt)"  && sh create_cert.sh $DOMAIN "$ORGANIZATION"
 
 WORKDIR /dist
