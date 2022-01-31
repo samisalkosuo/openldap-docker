@@ -17,9 +17,9 @@ then
     fi
 fi
 
-if [[ ! -f ../directory.ini ]]
+if [[ ! -f ../config.ini ]]
 then
-    echo "../directory.ini does not exist. Execute this script in openldap-docker/scripts-directory."
+    echo "../config.ini does not exist. Execute this script in openldap-docker/scripts-directory."
     exit 2
 fi
 set -e
