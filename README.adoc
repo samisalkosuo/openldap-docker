@@ -83,6 +83,19 @@ In order to create your own OpenLDAP image with custom domain and users, edit li
 - Start:
   - `docker run -it --rm -p 389:389 -p 636:636 --name my-openldap my-openldap`
 
+=== config.ini
+
+link:config.ini[config.ini] include settings like organization name, domain and users/groups. Modify them as required.
+
+link:config.ini[config.ini] includes also key `useRandomOrganizationAndUsers`. If the values is `yes`, random organization and users are created when building the container.
+
+In order to view generated organization and users, the build process adds _config.ini_ and _settings.txt_ files to the root of container filesystem.
+
+* View _config.ini_, including users:
+** `docker exec my-openldap cat /config.ini`
+* View _settings.txt_, including base DN, bind DN and filters:
+** `docker exec my-openldap cat /settings.txt`
+
 == Scripts
 
 link:scripts/[scripts]-directory includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.

@@ -1,4 +1,4 @@
-#create LDIF file from directory.ini
+#create LDIF file from config.ini
 
 import configparser
 import random
@@ -8,19 +8,94 @@ config.read('config.ini')
 
 #read global settings
 configuration=config['globalsettings']
-domain = configuration['domain']
-defaultPassword = configuration['defaultPassword']
 
+useRandomOrganizations=configuration['useRandomOrganizationAndUsers']
+if useRandomOrganizations == "yes":
+    #generate random organization like "Stark Entertainment", domain will be stark-entertainment.com
+    #and generate random users
+    originalAdminPassword = configuration['adminPassword']
+    originalDefaultPassword = configuration['defaultPassword']
+    originalLogLevel = configuration['logLevel']
+
+    nameconfig = configparser.ConfigParser(strict=False)
+    nameconfig.read('names.ini')
+    keys=[]
+    for key in nameconfig['companynames']:
+        keys.append(key.capitalize())
+    companyName=random.choice(keys)
+    keys=[]
+    for key in nameconfig['companysuffix']:
+        keys.append(key.capitalize())
+    firstNames=[]
+    for key in nameconfig['firstnames']:
+        firstNames.append(key.capitalize())
+    lastNames=[]
+    for key in nameconfig['lastnames']:
+        lastNames.append(key.capitalize())
+    randomNames=[]
+    for i in range(16):
+        name = "%s %s" % (random.choice(firstNames),random.choice(lastNames))
+        if name not in randomNames:
+            randomNames.append(name)
+    companySuffix=random.choice(keys)
+    newconfig = configparser.ConfigParser()
+    newconfig.optionxform = str
+    newconfig['globalsettings'] = {'useRandomOrganizationAndUsers': 'no',
+                      'adminPassword': originalAdminPassword,
+                      'logLevel': originalLogLevel,
+                      'defaultPassword': originalDefaultPassword,
+                      'domain': "%s-%s.com" % (companyName.lower(),companySuffix.lower()),
+                      'organization':"%s %s" % (companyName,companySuffix)
+                      }
+    def setUsers(group,offset):
+        newconfig[group]= {randomNames[0 + offset * 4]: "",
+                        randomNames[1 + offset * 4]: "",
+                        randomNames[2 + offset * 4]: "",
+                        randomNames[3 + offset * 4]: ""
+    }
+    setUsers('admin',0)
+    setUsers('research',1)
+    setUsers('operations',2)
+    setUsers('marketing',3)
+
+    with open('config.ini', 'w') as configfile:
+        newconfig.write(configfile)
+    #read new configuration
+    config = configparser.ConfigParser(strict=False)
+    config.read('config.ini')
+    configuration=config['globalsettings']
+
+
+defaultPassword = configuration['defaultPassword']
+adminPassword = configuration['adminPassword']
+domain = configuration['domain']
 organizationName=configuration['organization']
+
 organization=''
 domainParts=domain.split(".")
 organization=domainParts[0]
-organizationSuffix=domainParts[0]
+#organizationSuffix=domainParts[1]
+
 
 dcName=[]
 for domainPart in domainParts:
     dcName.append("dc="+domainPart)
 dcName=",".join(dcName)
+
+#create settings file that includes LDAP base DN, filters, etc.
+settingsFile=open("settings.txt","w")
+print("""#LDAP connections settings
+URL                : ldap://<fqdn.or.ip>:389
+Base DN            : %s
+Bind DN            : cn=admin,%s
+Admin password     : %s
+User filter        : (&(uid=%%v)(objectclass=inetOrgPerson))
+Group filter       : (&(cn=%%v)(objectclass=groupOfUniqueNames))
+User ID map        : *:uid
+Group ID map       : *:cn
+Group member ID map: groupOfUniqueNames:uniqueMember
+""" % (dcName, dcName, adminPassword), file=settingsFile)
+settingsFile.close()
 
 #create files for certificate generation
 domainFile=open("generated_domain.txt","w")
@@ -41,7 +116,7 @@ LDAP_LOG_LEVEL: %s
 LDAP_TLS_VERIFY_CLIENT: try
 """ % (organizationName, 
     domain,
-    configuration['adminPassword'],
+    adminPassword,
     configuration['logLevel']
     ),
     file=envFile)
