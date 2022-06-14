@@ -1,7 +1,7 @@
 #Create OpenLDAP image and configure using config.ini
 
 #create LDIF and configuration
-FROM docker.io/python:3.9.7-alpine3.14 as build
+FROM docker.io/python:3.10-alpine3.16 as build
 
 WORKDIR /config
 #create environment and LDIF file from ini-file
@@ -30,6 +30,8 @@ FROM docker.io/osixia/openldap:1.5.0
 COPY --from=build /config/config.ini /
 #copy settings file
 COPY --from=build /config/settings.txt /
+#copy LDIF file
+COPY --from=build /config/generated.ldif /
 
 #copy certs, env and LDIF
 COPY --from=certbuild /dist/* /container/service/slapd/assets/certs/

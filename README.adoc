@@ -10,10 +10,14 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 
 == Usage
 
-* Get Docker image: 
-** `docker pull kazhar/openldap-demo`
+* Get Docker image:
+```
+docker pull kazhar/openldap-demo
+```
 * Run Docker image: 
-** `docker run -d -p 389:389 -p 636:636 --name openldap-demo kazhar/openldap-demo`
+```
+docker run -d -p 389:389 -p 636:636 --name openldap-demo kazhar/openldap-demo
+```
 * Login to server:
 ** Base DN: `dc=sirius,dc=com`
 ** Admin user: `cn=admin,dc=sirius,dc=com`
@@ -39,7 +43,7 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 
 == LDAP connection and filters
 
-Some applications ask for LDAP connection and filters. If using this OpenLDAP demo, here are the settings and filters that should work:
+Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work:
 
 |===
 |Setting |Value
@@ -77,11 +81,15 @@ Some applications ask for LDAP connection and filters. If using this OpenLDAP de
 
 In order to create your own OpenLDAP image with custom domain and users, edit link:config.ini[config.ini] and then build a new OpenLDAP image.
 
-- Edit link:config.ini[config.ini].
-- Build image:
-  - `docker build -t my-openldap .`
-- Start:
-  - `docker run -it --rm -p 389:389 -p 636:636 --name my-openldap my-openldap`
+* Edit link:config.ini[config.ini].
+* Build image:
+```
+docker build -t my-openldap .
+```
+* Start:
+```
+docker run -it --rm -p 389:389 -p 636:636 --name my-openldap my-openldap
+```
 
 === config.ini
 
@@ -91,10 +99,18 @@ link:config.ini[config.ini] includes also key `useRandomOrganizationAndUsers`. I
 
 In order to view generated organization and users, the build process adds _config.ini_ and _settings.txt_ files to the root of container filesystem.
 
-* View _config.ini_, including users:
-** `docker exec my-openldap cat /config.ini`
 * View _settings.txt_, including base DN, bind DN and filters:
-** `docker exec my-openldap cat /settings.txt`
+```
+docker exec my-openldap cat /settings.txt
+```
+* View _generated.ldif_, including users and passwords:
+```
+docker exec my-openldap cat /generated.ldif
+```
+* View _config.ini_, used to build the image:
+```
+docker exec my-openldap cat /config.ini
+```
 
 == Scripts
 
