@@ -1,4 +1,6 @@
 = OpenLDAP demo container
+:toc: left
+:toc-title: Table of Contents
 
 OpenLDAP Docker container for demo purposes.
 
@@ -86,24 +88,94 @@ And one user in that group is :
 
 - `uid=kdoyle,ou=users,dc=sirius,dc=com`
 
-The default password for all users is `passw0rd`. Another password can be set in link:config.ini[config.ini].
+The default password for users is `passw0rd`. Another password can be set in link:config.ini[config.ini].
 
 See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
 
 === Default users and groups
 
 |===
-|Group |Name |UID |Default password
+|Name|Group |UID |Default password
 
-|admin
 |Kiara Doyle
+|admin
 |kdoyle
 |passw0rd
 
-|admin
 |Zac Fraser
+|admin
 |zfraser
 |passw0rd
+
+|Andre Shaw
+|admin
+|ashaw
+|passw0rd
+
+|Daniella Wells
+|admin
+|dwells
+|passw0rd
+
+|Olivia Berry
+|research
+|oberry
+|passw0rd
+
+|Oscar Davis
+|research
+|odavis
+|passw0rd
+
+|Amelia Lawson
+|research
+|alawson
+|passw0rd
+
+|Jonah Stone
+|research
+|jstone
+|passw0rd
+
+|Tom Foster
+|operations
+|tfoster
+|passw0rd
+
+|Cara Hawkins
+|operations
+|chawkins
+|passw0rd
+
+|Natalia Matthews
+|operations
+|nmatthews
+|passw0rd
+
+|George Watts
+|operations
+|gwatts
+|passw0rd
+
+|Hilary Banks
+|marketing
+|hbanks
+|hilary
+
+|Mallory Keaton
+|marketing
+|mkeaton
+|mkeaton
+
+|Ed Norton
+|marketing
+|mkeaton
+|pwd
+
+|Michael Scott
+|marketing
+|mscott
+|scott
 
 |===
 
