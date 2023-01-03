@@ -43,7 +43,17 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 
 == LDAP connection and filters
 
-Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work:
+Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work
+
+URL
+```
+ldap://server.ip:389
+```
+
+Base DN
+```
+dc=sirius,dc=com
+```
 
 |===
 |Setting |Value
