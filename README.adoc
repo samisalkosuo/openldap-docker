@@ -25,6 +25,55 @@ docker run -d -p 389:389 -p 636:636 --name openldap-demo kazhar/openldap-demo
 
 Or you can download/clone this repo and create and build your own OpenLDAP image.
 
+== LDAP connection and filters
+
+Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work
+
+URL
+```
+ldap://server.ip:389
+```
+
+Base DN
+```
+dc=sirius,dc=com
+```
+
+Bind DN
+```
+cn=admin,dc=sirius,dc=com
+```
+
+Admin password
+```
+passw0rd
+```
+
+User filter
+```
+(&(uid=%v)(objectclass=inetOrgPerson))
+```
+
+Group filter
+```
+(&(cn=%v)(objectclass=groupOfUniqueNames))
+```
+
+Group member ID map 
+```
+groupOfUniqueNames:uniqueMember
+```
+
+User ID map
+```
+*:uid
+```
+
+Group ID map
+```
+*:cn
+```
+
 == Groups and users
 
 Groups and users are specified in link:config.ini[config.ini]-file. When building container, LDIF file is generated (much like link:sample.ldif[sample.ldif]).
@@ -41,49 +90,20 @@ The default password for all users is `passw0rd`. Another password can be set in
 
 See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
 
-== LDAP connection and filters
-
-Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work
-
-URL
-```
-ldap://server.ip:389
-```
-
-Base DN
-```
-dc=sirius,dc=com
-```
+=== Default users and groups
 
 |===
-|Setting |Value
+|Group |Name |UID |Default password
 
-|URL
-|`ldap://server.ip:389`
+|admin
+|Kiara Doyle
+|kdoyle
+|passw0rd
 
-|Base DN
-|`dc=sirius,dc=com`
-
-|Bind DN
-|`cn=admin,dc=sirius,dc=com`
-
-|Admin password
-|`passw0rd`
-
-|User filter
-|`(&(uid=%v)(objectclass=inetOrgPerson))`
-
-|Group filter
-|`(&(cn=%v)(objectclass=groupOfUniqueNames))`
-
-|Group member ID map 
-|`groupOfUniqueNames:uniqueMember`
-
-|User ID map
-|`*:uid`
-
-|Group ID map
-|`*:cn`
+|admin
+|Zac Fraser
+|zfraser
+|passw0rd
 
 |===
 
