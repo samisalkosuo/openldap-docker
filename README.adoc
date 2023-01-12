@@ -100,20 +100,20 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 |Name |UID |Default password
 
 |Kiara Doyle
-|kdoyle
-|passw0rd
+|`kdoyle`
+|`passw0rd`
 
 |Zac Fraser
-|zfraser
-|passw0rd
+|`zfraser`
+|`passw0rd`
 
 |Andre Shaw
-|ashaw
-|passw0rd
+|`ashaw`
+|`passw0rd`
 
 |Daniella Wells
-|dwells
-|passw0rd
+|`dwells`
+|`passw0rd`
 
 |===
 
@@ -123,20 +123,20 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 |Name|UID |Default password
 
 |Olivia Berry
-|oberry
-|passw0rd
+|`oberry`
+|`passw0rd`
 
 |Oscar Davis
-|odavis
-|passw0rd
+|`odavis`
+|`passw0rd`
 
 |Amelia Lawson
-|alawson
-|passw0rd
+|`alawson`
+|`passw0rd`
 
 |Jonah Stone
-|jstone
-|passw0rd
+|`jstone`
+|`passw0rd`
 
 |===
 
@@ -146,20 +146,20 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 |Name|UID |Default password
 
 |Tom Foster
-|tfoster
-|passw0rd
+|`tfoster`
+|`passw0rd`
 
 |Cara Hawkins
-|chawkins
-|passw0rd
+|`chawkins`
+|`passw0rd`
 
 |Natalia Matthews
-|nmatthews
-|passw0rd
+|`nmatthews`
+|`passw0rd`
 
 |George Watts
-|gwatts
-|passw0rd
+|`gwatts`
+|`passw0rd`
 
 |===
 
@@ -169,20 +169,20 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 |Name|UID |Default password
 
 |Hilary Banks
-|hbanks
-|hilary
+|`hbanks`
+|`hilary`
 
 |Mallory Keaton
-|mkeaton
-|mkeaton
+|`mkeaton`
+|`mkeaton`
 
 |Ed Norton
-|mkeaton
-|pwd
+|`enorton`
+|`pwd`
 
 |Michael Scott
-|mscott
-|scott
+|`mscott`
+|`scott`
 
 |===
 
