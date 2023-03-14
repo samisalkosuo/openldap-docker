@@ -196,6 +196,7 @@ for group in groupSections:
             else:
                 pwd = defaultPassword
         name=user.split()
+        givenName=name[0].title()
         cn=user.title()
         uid=getUID(user)
         sn=""
@@ -208,11 +209,12 @@ for group in groupSections:
 dn: %s
 objectClass: inetOrgPerson
 cn: %s
+givenName: %s
 sn: %s
 uid: %s
 mail: %s
 userPassword: %s
-""" % (cn, getDN(uid), cn, sn, uid, mail, pwd))
+""" % (cn, getDN(uid), cn, givenName,  sn, uid, mail, pwd))
         users.append(user)
 
 #add groups to LDIF

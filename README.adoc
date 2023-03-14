@@ -29,52 +29,67 @@ Or you can download/clone this repo and create and build your own OpenLDAP image
 
 == LDAP connection and filters
 
-Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work
+Some applications ask for LDAP connection and filters. If using the default OpenLDAP demo image, here are the settings and filters that should work.
 
-URL
-```
-ldap://server.ip:389
-```
+|===
+|Setting |Value
 
-Base DN
-```
-dc=sirius,dc=com
-```
+|URL
+|`ldap://server.ip:389`
 
-Bind DN
-```
-cn=admin,dc=sirius,dc=com
-```
+|Base DN
+|`dc=sirius,dc=com`
 
-Admin password
-```
-passw0rd
-```
+|Bind DN, admin or domain search user
+|`cn=admin,dc=sirius,dc=com`
 
-User filter
-```
-(&(uid=%v)(objectclass=inetOrgPerson))
-```
+|Admin password
+|`passw0rd`
 
-Group filter
-```
-(&(cn=%v)(objectclass=groupOfUniqueNames))
-```
+|User filter
+|`(&(uid=%v)(objectclass=inetOrgPerson))`
 
-Group member ID map 
-```
-groupOfUniqueNames:uniqueMember
-```
+|Group filter
+|`(&(cn=%v)(objectclass=groupOfUniqueNames))`
 
-User ID map
-```
-*:uid
-```
+|Group member ID map 
+|`groupOfUniqueNames:uniqueMember`
 
-Group ID map
-```
-*:cn
-```
+|User ID map
+|`*:uid`
+
+|Group ID map
+|`*:cn`
+
+|User search base
+|`ou=users,dc=sirius,dc=com`
+
+|User search field
+|`uid`
+
+|Group search base
+|`ou=groups,dc=sirius,dc=com`
+
+|Group search field
+|`cn`
+
+|First name
+|`givenName`
+
+|Last name
+|`sn`
+
+|Email
+|`mail`
+
+|Group membership
+|`memberOf`
+
+|Group member field
+|`uniqueMember`
+
+
+|===
 
 == Groups and users
 
