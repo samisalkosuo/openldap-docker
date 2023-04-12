@@ -236,6 +236,20 @@ docker exec my-openldap cat /generated.ldif
 docker exec my-openldap cat /config.ini
 ```
 
+== Certificate
+
+Certificate is created when image is built, using https://github.com/samisalkosuo/certificate-authority[My CA].
+
+SANs in the certificate are:
+
+```
+openldap.<domain in config.ini>
+localhost
+127.0.0.1
+```
+
+To add your own SANs, use `--build-arg SANS="san1 san2"` when building the image.
+
 == Scripts
 
 link:scripts/[scripts]-directory includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.
