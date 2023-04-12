@@ -11,17 +11,21 @@ COPY config.ini .
 RUN python configureOpenLDAP.py
 
 #create certificate for OpenLDAP based on domain in config.ini
-FROM docker.io/alpine/openssl as certbuild
+FROM kazhar/certificate-authority as certbuild
 
-WORKDIR /cert
+#add custom SANs to certificate
+#when building image use --build-arg SANS="san1 san2"
+ARG SANS=""
 
 COPY --from=build /config/generated*.txt ./
-COPY certs/* ./
-RUN DOMAIN=$(cat generated_domain.txt) && ORGANIZATION="$(cat generated_org.txt)"  && sh create_cert.sh $DOMAIN "$ORGANIZATION"
 
-WORKDIR /dist
+#generate certificate
+RUN DOMAIN=$(cat generated_domain.txt) && \
+    ORGANIZATION="$(cat generated_org.txt)" && \
+    sh create-certificate.sh -c "$ORGANIZATION" -f ldap openldap.$DOMAIN localhost 127.0.0.1 $SANS
 
-RUN mv /cert/ca.crt /cert/ldap.crt /cert/ldap.key .
+WORKDIR /certs
+RUN mv /ca/certificate/ca.crt /ca/ldap.crt /ca/ldap.key .
 
 #OpenLDAP container
 FROM docker.io/osixia/openldap:1.5.0
@@ -34,6 +38,6 @@ COPY --from=build /config/settings.txt /
 COPY --from=build /config/generated.ldif /
 
 #copy certs, env and LDIF
-COPY --from=certbuild /dist/* /container/service/slapd/assets/certs/
+COPY --from=certbuild /certs/* /container/service/slapd/assets/certs/
 COPY --from=build /config/generated.yaml /container/environment/01-custom/env.yaml
 COPY --from=build /config/generated.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
