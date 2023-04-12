@@ -2,13 +2,18 @@ name: Container image build and push
 
 on:
   workflow_dispatch:
-  
+  push:
+#    branches:
+#      - main
+#      - dev
+    paths-ignore:
+      - '**.adoc'
+      - '.gitignore'
+      - '.github/**'
+
 jobs:
-
   build-and-push:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3
