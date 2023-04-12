@@ -12,10 +12,19 @@ jobs:
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3
+    - name: Set image tag
+      id: set_image_tag
+      run: |
+        if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+          echo "tag_name=latest" >> $GITHUB_ENV
+        else
+          echo "tag_name=$GITHUB_REF_NAME" >> $GITHUB_ENV
+        fi
     - name: Docker Build, Tag & Push
       uses: belon/docker-build-push@v4.0
       with:
         image: kazhar/openldap-demo
         registry: docker.io
+        tags: ${{ env.tag_name }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
