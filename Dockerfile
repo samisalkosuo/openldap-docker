@@ -16,13 +16,14 @@ FROM kazhar/certificate-authority as certbuild
 #add custom SANs to certificate
 #when building image use --build-arg SANS="san1 san2"
 ARG SANS=""
+ARG IP_SANS=""
 
 COPY --from=build /config/generated*.txt ./
 
 #generate certificate
 RUN DOMAIN=$(cat generated_domain.txt) && \
     ORGANIZATION="$(cat generated_org.txt)" && \
-    sh create-certificate.sh -c "$ORGANIZATION" -f ldap openldap.$DOMAIN localhost 127.0.0.1 $SANS
+    sh create-certificate.sh -c "$ORGANIZATION" -I "127.0.0.1 ${IP_SANS}" -f ldap openldap.$DOMAIN localhost $SANS
 
 WORKDIR /certs
 RUN mv /ca/certificate/ca.crt /ca/ldap.crt /ca/ldap.key .
