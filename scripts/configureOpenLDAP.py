@@ -76,6 +76,10 @@ domainParts=domain.split(".")
 organization=domainParts[0]
 #organizationSuffix=domainParts[1]
 
+#save admin password to file to be used in OpenLDAP container
+orgFile=open("adminpassword.txt","w")
+print(adminPassword,file=orgFile)
+orgFile.close()
 
 dcName=[]
 for domainPart in domainParts:
@@ -84,17 +88,17 @@ dcName=",".join(dcName)
 
 #create settings file that includes LDAP base DN, filters, etc.
 settingsFile=open("settings.txt","w")
-print("""#LDAP connections settings
+print(f"""#LDAP connections settings
 URL                : ldap://<fqdn.or.ip>:389
-Base DN            : %s
-Bind DN            : cn=admin,%s
-Admin password     : %s
+Base DN            : {dcName}
+Bind DN            : cn=admin,{dcName}
+Admin password     : {adminPassword}
 User filter        : (&(uid=%%v)(objectclass=inetOrgPerson))
 Group filter       : (&(cn=%%v)(objectclass=groupOfUniqueNames))
 User ID map        : *:uid
 Group ID map       : *:cn
 Group member ID map: groupOfUniqueNames:uniqueMember
-""" % (dcName, dcName, adminPassword), file=settingsFile)
+""",file=settingsFile)
 settingsFile.close()
 
 #create files for certificate generation
@@ -106,26 +110,27 @@ print(organizationName,file=orgFile)
 orgFile.close()
 
 #create ENV file for OpenLDAP container
-envFile=open("generated.yaml","w")
+envFile=open("generated.env","w")
 
-print("""#OpenLDAP environment variables
-LDAP_ORGANISATION: %s
-LDAP_DOMAIN: %s
-LDAP_ADMIN_PASSWORD: %s
-LDAP_LOG_LEVEL: %s
-LDAP_TLS_VERIFY_CLIENT: try
-""" % (organizationName, 
-    domain,
-    adminPassword,
-    configuration['logLevel']
-    ),
-    file=envFile)
+#LDAP_ADMIN_PASSWORD: {adminPassword}
+print(f"""#OpenLDAP environment variables
+LDAP_ALLOW_ANON_BINDING=no 
+LDAP_ROOT={dcName}
+LDAP_ADMIN_PASSWORD_FILE=/etc/adminpassword.txt
+LDAP_LOGLEVEL={configuration['logLevel']}
+LDAP_ENABLE_TLS=yes
+LDAP_TLS_CERT_FILE=/certs/ldap.crt
+LDAP_TLS_KEY_FILE=/certs/ldap.key
+LDAP_TLS_CA_FILE=/certs/ca.crt
+""",
+   file=envFile)
 
 envFile.close()
 
 #create LDIF
 
 #group sections
+
 groupSections = config.sections()
 #remove globalsettings from list
 groupSections.remove('globalsettings')
@@ -139,26 +144,26 @@ def ldif(line,emptyLine=False):
     if emptyLine == True:
         print("",file=ldifFile)
 
-ldif("""# Generated LDIF file
+ldif(f"""# Generated LDIF file
 
 # root entry
-#  dn: %s
-#  objectClass: dcObject
-#  objectClass: organization
-#  dc: %s
-#  o : %s
+dn: {dcName}
+objectClass: dcObject
+objectClass: organization
+dc: {organization}
+o: {organizationName}
 
 # users, as organizational unit
-dn: ou=users,%s
+dn: ou=users,{dcName}
 objectClass: organizationalUnit
 ou: users
 
 # groups, as organizational unit
-dn: ou=groups,%s
+dn: ou=groups,{dcName}
 objectClass: organizationalUnit
 ou: groups
 
-""" % (dcName, organization, organization, dcName, dcName))
+""")
 
 def getUID(user):
     name=user.split()
@@ -205,16 +210,16 @@ for group in groupSections:
         else:
             sn=name[1].title()
         mail="%s@%s" % (uid, domain)
-        ldif("""# user: %s
-dn: %s
+        ldif(f"""# user: {cn}
+dn: {getDN(uid)}
 objectClass: inetOrgPerson
-cn: %s
-givenName: %s
-sn: %s
-uid: %s
-mail: %s
-userPassword: %s
-""" % (cn, getDN(uid), cn, givenName,  sn, uid, mail, pwd))
+cn: {cn}
+givenName: {givenName}
+sn: {sn}
+uid: {uid}
+mail: {mail}
+userPassword: {pwd}
+""")
         users.append(user)
 
 #add groups to LDIF

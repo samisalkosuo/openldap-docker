@@ -9,6 +9,7 @@ COPY scripts/configureOpenLDAP.py .
 COPY scripts/names.ini .
 COPY config.ini .
 RUN python configureOpenLDAP.py
+#RUN cat generated.ldif
 
 #create certificate for OpenLDAP based on domain in config.ini
 FROM kazhar/certificate-authority as certbuild
@@ -29,16 +30,44 @@ WORKDIR /certs
 RUN mv /ca/certificate/ca.crt /ca/ldap.crt /ca/ldap.key .
 
 #OpenLDAP container
-FROM docker.io/osixia/openldap:1.5.0
+#based on bitnami image https://hub.docker.com/r/bitnami/openldap
+FROM docker.io/bitnami/openldap:2.6.4
 
+#default port numbers
+#ENV LDAP_PORT_NUMBER=1389
+#ENV LDAP_LDAPS_PORT_NUMBER=1636
+
+#copy OpenLDAP config LDIF
+COPY config/overlays.ldif /schemas/
+#copy certs
+COPY --from=certbuild --chmod=644 /certs/* /certs/
 #copy config.ini file
 COPY --from=build /config/config.ini /
 #copy settings file
 COPY --from=build /config/settings.txt /
+#copy admin password file
+COPY --from=build /config/adminpassword.txt /etc/
 #copy LDIF file
-COPY --from=build /config/generated.ldif /
+COPY --from=build /config/generated.ldif /ldifs/
+#copy env file
+COPY --from=build /config/generated.env /tmp/
 
-#copy certs, env and LDIF
-COPY --from=certbuild /certs/* /container/service/slapd/assets/certs/
-COPY --from=build /config/generated.yaml /container/environment/01-custom/env.yaml
-COPY --from=build /config/generated.ldif /container/service/slapd/assets/config/bootstrap/ldif/custom/
+#configure libopenldap.sh script to include generate environment variables
+#TODO: modify source libopenldap.sh so that it reads environment variables from file 
+#before setting the environment
+USER root
+WORKDIR /opt/bitnami/scripts/
+RUN csplit --suppress-matched libopenldap.sh '/ldap_env()/' '{*}' && \
+    cat xx00 > new.sh && \
+    cat /tmp/generated.env >> new.sh && \
+    echo "ldap_env() {" >> new.sh && \
+    cat xx01 >> new.sh && \
+    cp libopenldap.sh libopenldap.sh.original && \
+    cp new.sh libopenldap.sh 
+#    && \
+#    cat libopenldap.sh
+WORKDIR /
+USER 1001
+
+#print settings
+RUN cat /settings.txt

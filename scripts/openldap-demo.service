@@ -20,7 +20,7 @@ Description=My Demo OpenLDAP Podman Container
 
 [Service]
 ExecStartPre=-/usr/bin/podman rm -i -f openldap-demo
-ExecStart=/usr/bin/podman run --rm --publish 0.0.0.0:389:389 --publish 0.0.0.0:636:636 --name openldap-demo  docker.io/kazhar/openldap-demo:latest
+ExecStart=/usr/bin/podman run --rm --publish 0.0.0.0:389:1389 --publish 0.0.0.0:636:1636 --name openldap-demo  docker.io/kazhar/openldap-demo:latest
 Restart=always
 KillMode=control-group
 Type=simple
