@@ -119,9 +119,9 @@ LDAP_ROOT={dcName}
 LDAP_ADMIN_PASSWORD_FILE=/etc/adminpassword.txt
 LDAP_LOGLEVEL={configuration['logLevel']}
 LDAP_ENABLE_TLS=yes
-LDAP_TLS_CERT_FILE=/certs/ldap.crt
-LDAP_TLS_KEY_FILE=/certs/ldap.key
-LDAP_TLS_CA_FILE=/certs/ca.crt
+LDAP_TLS_CERT_FILE="${{LDAP_TLS_CERT_FILE:-/certs/ldap.crt}}"
+LDAP_TLS_KEY_FILE="${{LDAP_TLS_KEY_FILE:-/certs/ldap.key}}"
+LDAP_TLS_CA_FILE="${{LDAP_TLS_CA_FILE:-/certs/ca.crt}}"
 """,
    file=envFile)
 
