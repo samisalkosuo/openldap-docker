@@ -52,6 +52,9 @@ Some applications ask for LDAP connection and filters. If using the default Open
 |Group filter
 |`(&(cn=%v)(objectclass=groupOfUniqueNames))`
 
+|Group membership search filter
+|`(&(uniqueMember={0})(objectclass=groupOfUniqueNames))`
+
 |Group member ID map 
 |`groupOfUniqueNames:uniqueMember`
 
@@ -82,10 +85,10 @@ Some applications ask for LDAP connection and filters. If using the default Open
 |Email
 |`mail`
 
-|Group membership
+|Group membership (within inetorgPerson)
 |`memberOf`
 
-|Group member field
+|Group member field (within groupOfUniqueNames)
 |`uniqueMember`
 
 
