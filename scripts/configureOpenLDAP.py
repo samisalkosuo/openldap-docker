@@ -69,7 +69,8 @@ if useRandomOrganizations == "yes":
 defaultPassword = configuration['defaultPassword']
 adminPassword = configuration['adminPassword']
 domain = configuration['domain']
-organizationName=configuration['organization']
+organizationName = configuration['organization']
+allowAnonymousBind = configuration['allowAnonymousBind']
 
 organization=''
 domainParts=domain.split(".")
@@ -114,7 +115,7 @@ envFile=open("generated.env","w")
 
 #LDAP_ADMIN_PASSWORD: {adminPassword}
 print(f"""#OpenLDAP environment variables
-LDAP_ALLOW_ANON_BINDING=no 
+LDAP_ALLOW_ANON_BINDING={allowAnonymousBind}
 LDAP_ROOT={dcName}
 LDAP_ADMIN_PASSWORD_FILE=/etc/adminpassword.txt
 LDAP_LOGLEVEL={configuration['logLevel']}
