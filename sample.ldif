@@ -1,63 +1,215 @@
 # Generated LDIF file
 
 # root entry
-#  dn: dc=farawaygalaxy,dc=net
-#  objectClass: dcObject
-#  objectClass: organization
-#  dc: farawaygalaxy
-#  o : farawaygalaxy
+dn: dc=sirius,dc=com
+objectClass: dcObject
+objectClass: organization
+dc: sirius
+o: "Sirius Cybernetics Corporation"
 
 # users, as organizational unit
-dn: ou=users,dc=farawaygalaxy,dc=net
+dn: ou=users,dc=sirius,dc=com
 objectClass: organizationalUnit
 ou: users
 
 # groups, as organizational unit
-dn: ou=groups,dc=farawaygalaxy,dc=net
+dn: ou=groups,dc=sirius,dc=com
 objectClass: organizationalUnit
 ou: groups
 
-#user: Aayla Secura
-dn: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
+
+# user: Kiara Doyle
+dn: uid=kdoyle,ou=users,dc=sirius,dc=com
 objectClass: inetOrgPerson
-cn: Aayla Secura
-sn: Secura
-uid: asecura
+cn: Kiara Doyle
+givenName: Kiara
+sn: Doyle
+uid: kdoyle
+mail: kdoyle@sirius.com
 userPassword: passw0rd
 
-#user: Mace Windu
-dn: uid=mwindu,ou=users,dc=farawaygalaxy,dc=net
+# user: Zac Fraser
+dn: uid=zfraser,ou=users,dc=sirius,dc=com
 objectClass: inetOrgPerson
-cn: Mace Windu
-sn: Windu
-uid: mwindu
+cn: Zac Fraser
+givenName: Zac
+sn: Fraser
+uid: zfraser
+mail: zfraser@sirius.com
 userPassword: passw0rd
 
-#user: Darth Vader
-dn: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
+# user: Andre Shaw
+dn: uid=ashaw,ou=users,dc=sirius,dc=com
 objectClass: inetOrgPerson
-cn: Darth Vader
-sn: Vader
-uid: dvader
+cn: Andre Shaw
+givenName: Andre
+sn: Shaw
+uid: ashaw
+mail: ashaw@sirius.com
 userPassword: passw0rd
 
-#user: Count Dooku
-dn: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+# user: Daniella Wells
+dn: uid=dwells,ou=users,dc=sirius,dc=com
 objectClass: inetOrgPerson
-cn: Count Dooku
-sn: Dooku
-uid: cdooku
+cn: Daniella Wells
+givenName: Daniella
+sn: Wells
+uid: dwells
+mail: dwells@sirius.com
 userPassword: passw0rd
 
-dn: cn=jedi,ou=groups,dc=farawaygalaxy,dc=net
+# user: Olivia Berry
+dn: uid=oberry,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Olivia Berry
+givenName: Olivia
+sn: Berry
+uid: oberry
+mail: oberry@sirius.com
+userPassword: passw0rd
+
+# user: Oscar Davis
+dn: uid=odavis,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Oscar Davis
+givenName: Oscar
+sn: Davis
+uid: odavis
+mail: odavis@sirius.com
+userPassword: passw0rd
+
+# user: Amelia Lawson
+dn: uid=alawson,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Amelia Lawson
+givenName: Amelia
+sn: Lawson
+uid: alawson
+mail: alawson@sirius.com
+userPassword: passw0rd
+
+# user: Jonah Stone
+dn: uid=jstone,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Jonah Stone
+givenName: Jonah
+sn: Stone
+uid: jstone
+mail: jstone@sirius.com
+userPassword: passw0rd
+
+# user: Tom Foster
+dn: uid=tfoster,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Tom Foster
+givenName: Tom
+sn: Foster
+uid: tfoster
+mail: tfoster@sirius.com
+userPassword: passw0rd
+
+# user: Cara Hawkins
+dn: uid=chawkins,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Cara Hawkins
+givenName: Cara
+sn: Hawkins
+uid: chawkins
+mail: chawkins@sirius.com
+userPassword: passw0rd
+
+# user: Natalia Matthews
+dn: uid=nmatthews,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Natalia Matthews
+givenName: Natalia
+sn: Matthews
+uid: nmatthews
+mail: nmatthews@sirius.com
+userPassword: passw0rd
+
+# user: George Watts
+dn: uid=gwatts,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: George Watts
+givenName: George
+sn: Watts
+uid: gwatts
+mail: gwatts@sirius.com
+userPassword: passw0rd
+
+# user: Hilary Banks
+dn: uid=hbanks,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Hilary Banks
+givenName: Hilary
+sn: Banks
+uid: hbanks
+mail: hbanks@sirius.com
+userPassword: hilary
+
+# user: Mallory Keaton
+dn: uid=mkeaton,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Mallory Keaton
+givenName: Mallory
+sn: Keaton
+uid: mkeaton
+mail: mkeaton@sirius.com
+userPassword: mkeaton
+
+# user: Ed Norton
+dn: uid=enorton,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Ed Norton
+givenName: Ed
+sn: Norton
+uid: enorton
+mail: enorton@sirius.com
+userPassword: pwd
+
+# user: Michael Scott
+dn: uid=mscott,ou=users,dc=sirius,dc=com
+objectClass: inetOrgPerson
+cn: Michael Scott
+givenName: Michael
+sn: Scott
+uid: mscott
+mail: mscott@sirius.com
+userPassword: scott
+
+# group: admin
+dn: cn=admin,ou=groups,dc=sirius,dc=com
 objectClass: groupOfUniqueNames
-cn: jedi
-uniqueMember: uid=asecura,ou=users,dc=farawaygalaxy,dc=net
-uniqueMember: uid=mwindu,ou=users,dc=farawaygalaxy,dc=net
+cn: admin
+uniqueMember: uid=kdoyle,ou=users,dc=sirius,dc=com
+uniqueMember: uid=zfraser,ou=users,dc=sirius,dc=com
+uniqueMember: uid=ashaw,ou=users,dc=sirius,dc=com
+uniqueMember: uid=dwells,ou=users,dc=sirius,dc=com
 
-dn: cn=sith,ou=groups,dc=farawaygalaxy,dc=net
+# group: research
+dn: cn=research,ou=groups,dc=sirius,dc=com
 objectClass: groupOfUniqueNames
-cn: sith
-uniqueMember: uid=dvader,ou=users,dc=farawaygalaxy,dc=net
-uniqueMember: uid=cdooku,ou=users,dc=farawaygalaxy,dc=net
+cn: research
+uniqueMember: uid=oberry,ou=users,dc=sirius,dc=com
+uniqueMember: uid=odavis,ou=users,dc=sirius,dc=com
+uniqueMember: uid=alawson,ou=users,dc=sirius,dc=com
+uniqueMember: uid=jstone,ou=users,dc=sirius,dc=com
 
+# group: operations
+dn: cn=operations,ou=groups,dc=sirius,dc=com
+objectClass: groupOfUniqueNames
+cn: operations
+uniqueMember: uid=tfoster,ou=users,dc=sirius,dc=com
+uniqueMember: uid=chawkins,ou=users,dc=sirius,dc=com
+uniqueMember: uid=nmatthews,ou=users,dc=sirius,dc=com
+uniqueMember: uid=gwatts,ou=users,dc=sirius,dc=com
+
+# group: marketing
+dn: cn=marketing,ou=groups,dc=sirius,dc=com
+objectClass: groupOfUniqueNames
+cn: marketing
+uniqueMember: uid=hbanks,ou=users,dc=sirius,dc=com
+uniqueMember: uid=mkeaton,ou=users,dc=sirius,dc=com
+uniqueMember: uid=enorton,ou=users,dc=sirius,dc=com
+uniqueMember: uid=mscott,ou=users,dc=sirius,dc=com
