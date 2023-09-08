@@ -31,7 +31,7 @@ RUN mv /ca/certificate/ca.crt /ca/ldap.crt /ca/ldap.key .
 
 #OpenLDAP container
 #based on bitnami image https://hub.docker.com/r/bitnami/openldap
-FROM docker.io/bitnami/openldap:2.6.4
+FROM docker.io/bitnami/openldap:2.6.6
 
 #default port numbers
 #ENV LDAP_PORT_NUMBER=1389
