@@ -41,10 +41,12 @@ FROM docker.io/bitnami/openldap:2.6.6
 COPY config/overlays.ldif /schemas/
 #copy certs
 COPY --from=certbuild /certs/* /certs/
-#change certs chmods
+
+#change chmods
 USER root
-RUN chmod 644 /certs/*
+RUN chmod 644 /certs/* && chmod -R 755 /schemas/
 USER 1001
+
 #copy config.ini file
 COPY --from=build /config/config.ini /
 #copy settings file
