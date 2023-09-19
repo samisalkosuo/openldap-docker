@@ -1,8 +1,15 @@
 #!/bin/bash
 
-if [[ "$1" == "" ]]; then
-  echo "Last name is missing."
+function error
+{
+  echo "[ERROR] $1 is missing."
+  echo "Usage: $0 <$1>"
   exit 1
+
+}
+
+if [[ "$1" == "" ]]; then
+  error "last name"
 fi
 
 source $(pwd)/variables.env
