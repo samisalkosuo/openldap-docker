@@ -7,4 +7,4 @@ fi
 
 source $(pwd)/variables.env
 
-ldapsearch -D $LDAP_BIND_DN -w $LDAP_BIND_PWD -p $LDAP_PORT -h $LDAP_SERVER -b $LDAP_BASEDN "(&(objectclass=groupOfUniqueNames)(cn=$1))"
+ldapsearch -H $LDAP_URL -D $LDAP_BIND_DN -w $LDAP_BIND_PWD -b $LDAP_BASEDN "(&(objectclass=groupOfUniqueNames)(cn=$1))"
