@@ -268,3 +268,23 @@ docker run -d -p 389:1389 -p 636:1636 --name openldap-demo  -v $CERT_DIR:/certs2
 == Scripts
 
 link:scripts/[scripts]-directory includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.
+
+== OpenShift
+
+* Install openldap-demo to OpenShift:
+
+```
+sh ocp-openldap-demo.sh install <namespace>
+```
+
+* Uninstall openldap-demo from OpenShift:
+
+```
+sh ocp-openldap-demo.sh uninstall <namespace>
+```
+
+* See link:ocp-openldap-demo.sh/[ocp-openldap-demo.sh] for details.
+* OpenLDAP is accessible within the cluster.
+** For example:
+** `ldap://openldap-demo.<namespace>.svc.cluster.local:389`
+** `ldaps://openldap-demo.<namespace>.svc.cluster.local:636`
