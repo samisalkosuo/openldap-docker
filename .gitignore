@@ -1,4 +1,8 @@
+.vscode
 generated*
 Dockerfile.generated
 tmp/
 TODO*
+certs/*crt
+certs/*key
+test*.dockerfile
