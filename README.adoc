@@ -42,7 +42,7 @@ podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e LDAP_DOMAIN=way
 
 * Add your own certificate
 ```
-podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.crt:/certs/ldap.crt -v /tmp_crt/ldap.key:/certs/ldap.key -v /tmp/tmp_crt/ca.crt:/certs/ca.crt  kazhar/openldap-demo
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.crt:/certs/ldap.crt:z -v /tmp_crt/ldap.key:/certs/ldap.key:z -v /tmp/tmp_crt/ca.crt:/certs/ca.crt:z  kazhar/openldap-demo
 ```
 
 
@@ -315,7 +315,7 @@ When starting the container, set `-e CREATE_CERTS=true` to create fresh self-sig
 If you have existing certificates (for example, Let’s Encrypt certs), add them as volumes when starting the container:
 
 ```
-docker run -d -p 389:1389 -p 636:1636 --name openldap-demo -v /my-certs/privkey1.pem:/certs/ldap.key -v /my-certs/cert1.pem:/certs/ldap.crt -v /my-certs/ca.crt:/certs/ca.crt kazhar/openldap-demo
+podman run -it --rm -p 389:1389 -p 636:1636 --name openldap-demo -v /my-certs/privkey1.pem:/certs/ldap.key:z -v /my-certs/cert1.pem:/certs/ldap.crt:z -v /my-certs/ca.crt:/certs/ca.crt:z kazhar/openldap-demo
 ```
 
 * -v option maps file to file.
