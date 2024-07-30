@@ -1,0 +1,13 @@
+= Certificate
+
+Add your own certificates here.
+
+Use following file names:
+
+* _ca.crt_ - CA certificate.
+* _ldap.crt_ - OpenLDAP certificate, signed by CA.
+* _ldap.key_ - OpenLDAP certificate key.
+
+If present, these files are added to OpenLDAP demo container during build.
+
+If certificate files are not present, then certificate is generated when starting container.

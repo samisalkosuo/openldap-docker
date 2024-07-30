@@ -1,79 +1,57 @@
-#Create OpenLDAP image and configure using config.ini
+#Create OpenLDAP image
 
-#create LDIF and configuration
-FROM docker.io/python:3.10-alpine3.16 as build
-
-WORKDIR /config
-#create environment and LDIF file from ini-file
-COPY scripts/configureOpenLDAP.py .
-COPY scripts/names.ini .
-COPY config.ini .
-RUN python configureOpenLDAP.py
-#RUN cat generated.ldif
-
-#create certificate for OpenLDAP based on domain in config.ini
-FROM kazhar/certificate-authority as certbuild
-
-#add custom SANs to certificate
-#when building image use --build-arg SANS="san1 san2"
-ARG SANS=""
-ARG IP_SANS=""
-
-COPY --from=build /config/generated*.txt ./
-
-#generate certificate
-RUN DOMAIN=$(cat generated_domain.txt) && \
-    ORGANIZATION="$(cat generated_org.txt)" && \
-    sh create-certificate.sh -c "$ORGANIZATION" -I "127.0.0.1 ${IP_SANS}" -f ldap openldap.$DOMAIN localhost $SANS
-
-WORKDIR /certs
-RUN mv /ca/certificate/ca.crt /ca/ldap.crt /ca/ldap.key .
-
-#OpenLDAP container
 #based on bitnami image https://hub.docker.com/r/bitnami/openldap
-FROM docker.io/bitnami/openldap:2.6.6
+FROM docker.io/bitnami/openldap:2.6.8
 
+#domain to be used in LDIF
+ENV LDAP_DOMAIN sirius.com
+#base dn, mandatory, must reflect domain
+ENV LDAP_ROOT dc=sirius,dc=com
+#organization name/description, could be company name
+ENV LDAP_ORGANIZATION "Sirius Cybernetics Corporation"
+#admin user password, user name is 'admin'
+ENV LDAP_ADMIN_PASSWORD passw0rd
+#default password for all users
+ENV DEFAULT_USER_PASSWORD passw0rd
+ENV LDAP_USERS_AND_GROUPS "admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
+
+ENV LDAP_ALLOW_ANON_BINDING no
+#OpenLDAP log level
+#see https://www.openldap.org/doc/admin24/slapdconf2.html for levels
+ENV LDAP_LOGLEVEL 256
 #default port numbers
-#ENV LDAP_PORT_NUMBER=1389
-#ENV LDAP_LDAPS_PORT_NUMBER=1636
+ENV LDAP_PORT_NUMBER=1389
+ENV LDAP_LDAPS_PORT_NUMBER=1636
+
+#TLS config
+ENV LDAP_ENABLE_TLS yes
+ENV LDAP_TLS_CERT_FILE /certs/ldap.crt
+ENV LDAP_TLS_KEY_FILE  /certs/ldap.key
+ENV LDAP_TLS_CA_FILE /certs/ca.crt
 
 #copy OpenLDAP config LDIF
 COPY config/overlays.ldif /schemas/
-#copy certs
-COPY --from=certbuild /certs/* /certs/
 
-#change chmods
 USER root
-RUN chmod 644 /certs/* && chmod -R 755 /schemas/
-USER 1001
 
-#copy config.ini file
-COPY --from=build /config/config.ini /
-#copy settings file
-COPY --from=build /config/settings.txt /
-#copy admin password file
-COPY --from=build /config/adminpassword.txt /etc/
-#copy LDIF file
-COPY --from=build /config/generated.ldif /ldifs/
-#copy env file
-COPY --from=build /config/generated.env /tmp/
+COPY certs/ /certs/
+RUN bash /certs/prepare-certs.sh && \
+    mv /tmp/certificate.crt /certs/ldap.crt && \
+    mv /tmp/certificate.key /certs/ldap.key && \
+    mv /tmp/ca.crt /certs/ca.crt && \
+    rm -f /tmp/*.txt /tmp/*.csr /tmp/*.crt /tmp/*.key && \
+    chown -R 1001 /certs/ && \
+    chmod 644 /certs/* && \
+    chmod -R 755 /schemas/
 
-#configure libopenldap.sh script to include generate environment variables
-#TODO: modify source libopenldap.sh so that it reads environment variables from file 
-#before setting the environment
-USER root
-WORKDIR /opt/bitnami/scripts/
-RUN csplit --suppress-matched libopenldap.sh '/ldap_env()/' '{*}' && \
-    cat xx00 > new.sh && \
-    cat /tmp/generated.env >> new.sh && \
-    echo "ldap_env() {" >> new.sh && \
-    cat xx01 >> new.sh && \
-    cp libopenldap.sh libopenldap.sh.original && \
-    cp new.sh libopenldap.sh 
-#    && \
-#    cat libopenldap.sh
 WORKDIR /
-USER 1001
 
-#print settings
-RUN cat /settings.txt
+#copy setup script
+COPY setup-container.sh ./
+#create dirs, copy certs and add setup script to container entrypoint script
+RUN mkdir -p /ldifs && \
+    chown -R 1001 /ldifs/ && \
+    cp /opt/bitnami/scripts/openldap/entrypoint.sh tmpentrypoint.sh && \
+    cat setup-container.sh tmpentrypoint.sh > /opt/bitnami/scripts/openldap/entrypoint.sh
+
+USER 1001

@@ -14,11 +14,11 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 
 * Get Docker image:
 ```
-docker pull kazhar/openldap-demo
+podman pull kazhar/openldap-demo
 ```
 * Run Docker image: 
 ```
-docker run -d -p 389:1389 -p 636:1636 --name openldap-demo kazhar/openldap-demo
+podman run -d -p 389:1389 -p 636:1636 --name openldap-demo kazhar/openldap-demo
 ```
 * Login to server:
 ** Base DN: `dc=sirius,dc=com`
@@ -26,6 +26,76 @@ docker run -d -p 389:1389 -p 636:1636 --name openldap-demo kazhar/openldap-demo
 ** Password: `passw0rd`
 
 Or you can download/clone this repo and create and build your own OpenLDAP image.
+
+=== Samples
+
+* Add group _staff_ and some users.
+```
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e ADDITIONAL_LDAP_USERS_AND_GROUPS="staff:Ulysses Ser1, Uma Ser2, Uriel Ser3, Ulrich Ser4, Ursula Ser5, Upton Ser6, Uriah Ser7, Uliana Ser8, Ulma Ser9, Ulric Ser10" kazhar/openldap-demo
+```
+
+* Add your own organization, domain and create new self-signed certificates.
+
+```
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e LDAP_DOMAIN=wayne.net -e LDAP_ROOT="dc=wayne,dc=net" -e LDAP_ORGANIZATION="Wayne Machines" -e CREATE_CERTS=true kazhar/openldap-demo
+```
+
+* Add your own certificate
+```
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.crt:/certs/ldap.crt -v /tmp_crt/ldap.key:/certs/ldap.key -v /tmp/tmp_crt/ca.crt:/certs/ca.crt  kazhar/openldap-demo
+```
+
+
+=== Environment variables
+
+
+|===
+|Name |Default Value|Description
+
+|LDAP_DOMAIN 
+|sirius.com
+|Domain used in certificate and user emails.
+
+|LDAP_ROOT
+|dc=sirius,dc=com
+|Base DN. Must match domain.
+
+|LDAP_ORGANIZATION 
+|Sirius Cybernetics Corporation
+|Organization name/description. For example, company name.
+
+|LDAP_ADMIN_PASSWORD
+|passw0rd
+|Administrator password.
+
+|DEFAULT_USER_PASSWORD
+|passw0rd
+|Default user password.
+
+|LDAP_USERS_AND_GROUPS
+|admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott
+|List of users and groups.
+
+|ADDITIONAL_LDAP_USERS_AND_GROUPS
+|
+|Additional list of users and groups. Added after _LDAP_USERS_AND_GROUPS_.
+
+|CREATE_CERTS
+|
+|Set to `true` to generated fresh self-signed certificates.
+
+|SANS
+|
+|Space separated list of hostnames,  added to self-signed certificate.
+
+|IP_SANS
+|
+|Space separated list of IP addresses, added to self-signed certificate.
+
+
+|===
+
+See also link:Dockerfile[Dockerfile] for more environment variables.
 
 == LDAP connection and filters
 
@@ -96,7 +166,19 @@ Some applications ask for LDAP connection and filters. If using the default Open
 
 == Groups and users
 
-Groups and users are specified in link:config.ini[config.ini]-file. When building container, LDIF file is generated (much like link:sample.ldif[sample.ldif]).
+Groups and users are specified in environment variable _LDAP_USERS_AND_GROUPS_.
+
+The format of the environment variable is:
+
+```
+<groupname>:<firstname> <lastname>[=<password>],<firstname> <lastname>[=<password>];<groupname>:<firstname> <lastname>[=<password>],<firstname> <lastname>[=<password>]
+```
+
+For example, this is the default value:
+
+```
+admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott
+```
 
 One group is:
 
@@ -106,9 +188,7 @@ And one user in that group is :
 
 - `uid=kdoyle,ou=users,dc=sirius,dc=com`
 
-The default password for users is `passw0rd`. Another password can be set in link:config.ini[config.ini].
-
-See the generated LDIF or use a LDAP admin tool to get more information about the user entries.
+The default password for users is set by _DEFAULT_USER_PASSWORD_ environment variable.
 
 === Default users and groups
 
@@ -206,37 +286,16 @@ See the generated LDIF or use a LDAP admin tool to get more information about th
 
 == Create your own demo image
 
-In order to create your own OpenLDAP image with custom domain and users, edit link:config.ini[config.ini] and then build a new OpenLDAP image.
+In order to create your own OpenLDAP image with custom domain and users, edit link:Dockerfile[Dockerfile] and then build a new OpenLDAP image.
 
-* Edit link:config.ini[config.ini].
+* Edit link:Dockerfile[Dockerfile].
 * Build image:
 ```
-docker build -t my-openldap .
+podman build -t my-openldap .
 ```
 * Start:
 ```
-docker run -it --rm -p 389:1389 -p 636:1636 --name my-openldap my-openldap
-```
-
-=== config.ini
-
-link:config.ini[config.ini] include settings like organization name, domain and users/groups. Modify them as required.
-
-link:config.ini[config.ini] includes also key `useRandomOrganizationAndUsers`. If the values is `yes`, random organization and users are created when building the container.
-
-In order to view generated organization and users, the build process adds _config.ini_ and _settings.txt_ files to the root of container filesystem.
-
-* View _settings.txt_, including base DN, bind DN and filters:
-```
-docker exec my-openldap cat /settings.txt
-```
-* View _generated.ldif_, including users and passwords:
-```
-docker exec my-openldap cat /ldifs/generated.ldif
-```
-* View _config.ini_, used to build the image:
-```
-docker exec my-openldap cat /config.ini
+podman run -it --rm -p 389:1389 -p 636:1636 --name my-openldap my-openldap
 ```
 
 == Certificate
@@ -246,24 +305,21 @@ Certificate is created when image is built, using https://github.com/samisalkosu
 SANs in the certificate are:
 
 ```
-DNS: openldap.<domain in config.ini>
+DNS: openldap.<domain in LDAP_DOMAIN environment variable>
 DNS: localhost
 IP: 127.0.0.1
 ```
 
-To add your own SANs, use `--build-arg SANS="san1 san2"` when building the image.
+When starting the container, set `-e CREATE_CERTS=true` to create fresh self-signed certificates.
 
-To add your own IP SANs, use `--build-arg IPSANS="ip1 ip2"` when building the image.
-
-If you have existing certificates (for example, Let’s Encrypt certs), add them when starting the container:
+If you have existing certificates (for example, Let’s Encrypt certs), add them as volumes when starting the container:
 
 ```
-docker run -d -p 389:1389 -p 636:1636 --name openldap-demo  -v $CERT_DIR:/certs2 -e LDAP_TLS_KEY_FILE=/certs2/privkey1.pem -e LDAP_TLS_CERT_FILE=/certs2/cert1.pem -e LDAP_TLS_CA_FILE=/certs2/chain1.pem kazhar/openldap-demo
+docker run -d -p 389:1389 -p 636:1636 --name openldap-demo -v /my-certs/privkey1.pem:/certs/ldap.key -v /my-certs/cert1.pem:/certs/ldap.crt -v /my-certs/ca.crt:/certs/ca.crt kazhar/openldap-demo
 ```
 
-* _CERT_DIR_ is the directory where certificate files are located. 
-* Environment variables tells OpenLDAP the files to use.
-* Make note of certificate files permissions in _CERT_DIR_. It may require relaxed permissions, for example 644.
+* -v option maps file to file.
+
 
 == Scripts
 
