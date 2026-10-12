@@ -13,7 +13,15 @@ ENV LDAP_ADMIN_PASSWORD=passw0rd
 ENV DEFAULT_USER_PASSWORD=passw0rd
 
 # ── Default users and groups ─────────────────────────────────────────────────
-ENV LDAP_USERS_AND_GROUPS="admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
+# Legacy variable (commented out, retained for backward compatibility if passed at runtime):
+# ENV LDAP_USERS_AND_GROUPS="admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
+
+# Structured group and user configuration
+ENV LDAP_GROUPS="admin,research,operations,marketing"
+ENV LDAP_USERS_ADMIN="Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells"
+ENV LDAP_USERS_RESEARCH="Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone"
+ENV LDAP_USERS_OPERATIONS="Tom Foster,Cara Hawkins,Natalia Matthews,George Watts"
+ENV LDAP_USERS_MARKETING="Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
 
 # ── Runtime tuning ───────────────────────────────────────────────────────────
 # OpenLDAP log level - see https://www.openldap.org/doc/admin24/slapdconf2.html

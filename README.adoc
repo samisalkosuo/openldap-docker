@@ -29,9 +29,9 @@ Or you can download/clone this repo and create and build your own OpenLDAP image
 
 === Samples
 
-* Add group _staff_ and some users.
+* Add an ad-hoc group _staff_ and some users:
 ```
-podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e ADDITIONAL_LDAP_USERS_AND_GROUPS="staff:Ulysses Ser1, Uma Ser2, Uriel Ser3, Ulrich Ser4, Ursula Ser5, Upton Ser6, Uriah Ser7, Uliana Ser8, Ulma Ser9, Ulric Ser10" docker.io/kazhar/openldap-demo:latest
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e LDAP_GROUP_STAFF="Ulysses Ser1, Uma Ser2, Uriel Ser3, Ulrich Ser4, Ursula Ser5, Upton Ser6, Uriah Ser7, Uliana Ser8, Ulma Ser9, Ulric Ser10" docker.io/kazhar/openldap-demo:latest
 ```
 
 * Add your own organization, domain and create new self-signed certificates.
@@ -80,13 +80,25 @@ podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
 |passw0rd
 |Default user password.
 
+|LDAP_GROUPS
+|`admin,research,operations,marketing`
+|Comma-separated list of group names.
+
+|LDAP_USERS_<GROUPNAME>
+|(See defaults per group)
+|Comma-separated list of users belonging to the group (e.g. `LDAP_USERS_ADMIN="Kiara Doyle,Zac Fraser"`).
+
+|LDAP_GROUP_<GROUPNAME>
+|
+|Dynamic variable to quickly define an ad-hoc group and its users (e.g. `LDAP_GROUP_DEVELOPERS="John Doe,bob=pwd"`).
+
 |LDAP_USERS_AND_GROUPS
-|admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott
-|List of users and groups.
+|
+|_(Deprecated, legacy format)_ Semicolon-separated list of groups with colon-separated user lists. If set, overrides the structured env variables for backward compatibility.
 
 |ADDITIONAL_LDAP_USERS_AND_GROUPS
 |
-|Additional list of users and groups. Added after _LDAP_USERS_AND_GROUPS_.
+|_(Deprecated, legacy format)_ Additional list of users and groups appended to _LDAP_USERS_AND_GROUPS_.
 
 |LDAP_PERSIST
 |
@@ -181,29 +193,60 @@ Some applications ask for LDAP connection and filters. If using the default Open
 
 == Groups and users
 
-Groups and users are specified in environment variable _LDAP_USERS_AND_GROUPS_.
+Groups and users can be configured via environment variables in two ways:
 
-The format of the environment variable is:
+=== 1. Structured Groups and Users (`LDAP_GROUPS` and `LDAP_USERS_<GROUPNAME>`)
+
+Specify a comma-separated list of groups in `LDAP_GROUPS`, and provide the users for each group in `LDAP_USERS_<GROUPNAME>` (case-insensitive group name).
+
+For example:
+```
+LDAP_GROUPS="admin,research"
+LDAP_USERS_ADMIN="Kiara Doyle,Zac Fraser,ashaw=newpwd,Arthur Port=newpwd"
+LDAP_USERS_RESEARCH="Olivia Berry,Oscar Davis"
+```
+
+=== 2. Ad-hoc Groups and Users (`LDAP_GROUP_<GROUPNAME>`)
+
+Quickly define or add a group and its users directly with an `LDAP_GROUP_<GROUPNAME>` variable without needing to list it in `LDAP_GROUPS`:
 
 ```
-<groupname>:<firstname> <lastname>[=<password>],<firstname> <lastname>[=<password>];<groupname>:<firstname> <lastname>[=<password>],<firstname> <lastname>[=<password>]
+LDAP_GROUP_DEVELOPERS="John Doe,Jane Smith=secret,ashaw"
 ```
 
-For example, this is the default value:
+If a group is defined in both `LDAP_GROUPS` (with `LDAP_USERS_<GROUP>`) and `LDAP_GROUP_<GROUP>`, their user lists are combined.
+
+=== User Format
+
+Each user in a comma-separated user list can be specified in one of two formats:
+
+1. **Full Name (`FirstName LastName[=password]`)**:
+   - `givenName`: `FirstName`
+   - `sn`: `LastName`
+   - `cn`: `FirstName LastName`
+   - `uid`: Derived from first letter of first name + lowercase last name (e.g. `Kiara Doyle` -> `kdoyle`)
+   - `mail`: `<uid>@<LDAP_DOMAIN>` (e.g. `kdoyle@sirius.com`)
+   - `password`: Custom password if `=password` is provided, otherwise `DEFAULT_USER_PASSWORD` (`passw0rd`).
+
+2. **Arbitrary UID (`uid[=password]`)**:
+   - `uid`: Lowercase UID (e.g. `ashaw` -> `ashaw`)
+   - `givenName`: `User`
+   - `sn`: Capitalized UID (e.g. `Ashaw`)
+   - `cn`: `User <CapitalizedUid>` (e.g. `User Ashaw`)
+   - `mail`: `<uid>@<LDAP_DOMAIN>` (e.g. `ashaw@sirius.com`)
+   - `password`: Custom password if `=password` is provided, otherwise `DEFAULT_USER_PASSWORD`.
+
+=== Backward Compatibility (Legacy Format)
+
+The legacy format using `LDAP_USERS_AND_GROUPS` and `ADDITIONAL_LDAP_USERS_AND_GROUPS` is still supported:
 
 ```
-admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott
+LDAP_USERS_AND_GROUPS="admin:Kiara Doyle,Zac Fraser;research:Olivia Berry,Oscar Davis"
 ```
 
-One group is:
+If either `LDAP_USERS_AND_GROUPS` or `ADDITIONAL_LDAP_USERS_AND_GROUPS` is set at runtime, legacy parsing is used and structured environment variables are ignored.
 
-- `cn=admin,ou=groups,dc=sirius,dc=com`
-
-And one user in that group is :
-
-- `uid=kdoyle,ou=users,dc=sirius,dc=com`
-
-The default password for users is set by _DEFAULT_USER_PASSWORD_ environment variable.
+The default password for users when not specified is set by the `DEFAULT_USER_PASSWORD` environment variable.
 
 === Default users and groups
 

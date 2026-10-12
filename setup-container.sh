@@ -10,13 +10,22 @@ LDAP_ROOT="${LDAP_ROOT:-dc=sirius,dc=com}"
 LDAP_ORGANIZATION="${LDAP_ORGANIZATION:-Sirius Cybernetics Corporation}"
 LDAP_ADMIN_PASSWORD="${LDAP_ADMIN_PASSWORD:-passw0rd}"
 DEFAULT_USER_PASSWORD="${DEFAULT_USER_PASSWORD:-passw0rd}"
-LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS:-admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott}"
 LDAP_LOGLEVEL="${LDAP_LOGLEVEL:-256}"
 LDAP_PERSIST="${LDAP_PERSIST:-}"
 CREATE_CERTS="${CREATE_CERTS:-}"
 SANS="${SANS:-}"
 IP_SANS="${IP_SANS:-}"
 
+# Legacy group and user configuration (kept for backward compatibility)
+LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS:-}"
+ADDITIONAL_LDAP_USERS_AND_GROUPS="${ADDITIONAL_LDAP_USERS_AND_GROUPS:-}"
+
+# Structured group and user configuration
+LDAP_GROUPS="${LDAP_GROUPS:-admin,research,operations,marketing}"
+LDAP_USERS_ADMIN="${LDAP_USERS_ADMIN:-Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells}"
+LDAP_USERS_RESEARCH="${LDAP_USERS_RESEARCH:-Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone}"
+LDAP_USERS_OPERATIONS="${LDAP_USERS_OPERATIONS:-Tom Foster,Cara Hawkins,Natalia Matthews,George Watts}"
+LDAP_USERS_MARKETING="${LDAP_USERS_MARKETING:-Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott}"
 SLAPD_CONFIG_DIR=/etc/openldap/slapd.d
 SLAPD_DATA_DIR=/var/lib/openldap/data
 SLAPD_CONF_TEMPLATE=/etc/openldap/slapd.conf.tmpl
@@ -38,13 +47,14 @@ generate_user_entry() {
   local uid=$1
   local given_name=$2
   local sn=$3
-  local password=$4
+  local cn=$4
+  local password=$5
 
   cat <<EOF
-# user: ${given_name} ${sn}
+# user: ${cn}
 dn: uid=${uid},ou=users,${LDAP_ROOT}
 objectClass: inetOrgPerson
-cn: ${given_name} ${sn}
+cn: ${cn}
 givenName: ${given_name}
 sn: ${sn}
 uid: ${uid}
@@ -54,10 +64,50 @@ userPassword: ${password}
 EOF
 }
 
-# Combine base + additional groups
-if [ -n "$ADDITIONAL_LDAP_USERS_AND_GROUPS" ]; then
-  LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS};${ADDITIONAL_LDAP_USERS_AND_GROUPS}"
-fi
+# Helper: parse individual user specification and generate user LDIF
+# Supports: "FirstName LastName[=password]" or "uid[=password]"
+process_user() {
+  local raw_user="$1"
+  raw_user="${raw_user#"${raw_user%%[![:space:]]*}"}"
+  raw_user="${raw_user%"${raw_user##*[![:space:]]}"}"
+  [ -z "$raw_user" ] && return 0
+
+  local name_part=""
+  local password=""
+  if [[ "$raw_user" == *"="* ]]; then
+    IFS='=' read -r name_part password <<< "$raw_user"
+  else
+    name_part="$raw_user"
+    password="$DEFAULT_USER_PASSWORD"
+  fi
+
+  name_part="${name_part#"${name_part%%[![:space:]]*}"}"
+  name_part="${name_part%"${name_part##*[![:space:]]}"}"
+  [ -z "$name_part" ] && return 0
+
+  local uid=""
+  local given_name=""
+  local sn=""
+  local cn=""
+
+  if [[ "$name_part" == *" "* ]]; then
+    given_name="${name_part%% *}"
+    sn="${name_part#* }"
+    local sn_clean="${sn// /}"
+    uid=$(echo "${given_name:0:1}${sn_clean}" | tr '[:upper:]' '[:lower:]')
+    cn="${name_part}"
+  else
+    uid=$(echo "$name_part" | tr '[:upper:]' '[:lower:]')
+    given_name="User"
+    local first_char=$(echo "${uid:0:1}" | tr '[:lower:]' '[:upper:]')
+    local rest_chars="${uid:1}"
+    sn="${first_char}${rest_chars}"
+    cn="${given_name} ${sn}"
+  fi
+
+  generate_user_entry "$uid" "$given_name" "$sn" "$cn" "$password" > "/tmp/users/${uid}.ldif"
+  echo "$uid"
+}
 
 {
   echo "# Generated LDIF file"
@@ -80,40 +130,113 @@ fi
   echo "ou: groups"
   echo ""
 
-  # Parse groups and users
-  IFS=';' read -r -a groups_arr <<< "$LDAP_USERS_AND_GROUPS"
-  for group in "${groups_arr[@]}"; do
-    IFS=':' read -r group_name users_str <<< "$group"
-    IFS=',' read -r -a user_array <<< "$users_str"
+  if [ -n "$LDAP_USERS_AND_GROUPS" ] || [ -n "$ADDITIONAL_LDAP_USERS_AND_GROUPS" ]; then
+    echo "==> Using legacy LDAP_USERS_AND_GROUPS / ADDITIONAL_LDAP_USERS_AND_GROUPS configuration..." >&2
+    LEGACY_DEFAULT="admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
+    LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS:-$LEGACY_DEFAULT}"
+    if [ -n "$ADDITIONAL_LDAP_USERS_AND_GROUPS" ]; then
+      LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS};${ADDITIONAL_LDAP_USERS_AND_GROUPS}"
+    fi
 
-    echo "# group: ${group_name}"
-    echo "dn: cn=${group_name},ou=groups,${LDAP_ROOT}"
-    echo "objectClass: groupOfUniqueNames"
-    echo "cn: ${group_name}"
+    IFS=';' read -r -a groups_arr <<< "$LDAP_USERS_AND_GROUPS"
+    for group in "${groups_arr[@]}"; do
+      IFS=':' read -r group_name users_str <<< "$group"
+      group_name="${group_name#"${group_name%%[![:space:]]*}"}"
+      group_name="${group_name%"${group_name##*[![:space:]]}"}"
+      [ -z "$group_name" ] && continue
 
-    for user in "${user_array[@]}"; do
-      # trim leading/trailing whitespace
-      user="${user#"${user%%[![:space:]]*}"}"
-      user="${user%"${user##*[![:space:]]}"}"
+      echo "# group: ${group_name}"
+      echo "dn: cn=${group_name},ou=groups,${LDAP_ROOT}"
+      echo "objectClass: groupOfUniqueNames"
+      echo "cn: ${group_name}"
 
-      if [[ "$user" == *"="* ]]; then
-        IFS='=' read -r name password <<< "$user"
-        IFS=' ' read -r given_name sn <<< "$name"
+      IFS=',' read -r -a user_array <<< "$users_str"
+      for user in "${user_array[@]}"; do
+        uid=$(process_user "$user")
+        [ -n "$uid" ] && echo "uniqueMember: uid=${uid},ou=users,${LDAP_ROOT}"
+      done
+      echo ""
+    done
+  else
+    echo "==> Using structured LDAP_GROUPS, LDAP_USERS_*, and LDAP_GROUP_* configuration..." >&2
+    declare -A groups_map
+    groups_order=()
+
+    # 1. Collect groups from LDAP_GROUPS
+    if [ -n "$LDAP_GROUPS" ]; then
+      IFS=',' read -r -a defined_groups <<< "$LDAP_GROUPS"
+      for g in "${defined_groups[@]}"; do
+        g="${g#"${g%%[![:space:]]*}"}"
+        g="${g%"${g##*[![:space:]]}"}"
+        [ -z "$g" ] && continue
+        g_lower=$(echo "$g" | tr '[:upper:]' '[:lower:]')
+        if [ -z "${groups_map[$g_lower]:-}" ]; then
+          groups_order+=("$g_lower")
+          groups_map[$g_lower]=1
+        fi
+      done
+    fi
+
+    # 2. Collect ad-hoc groups from LDAP_GROUP_* environment variables
+    while IFS= read -r var_name; do
+      [ -z "$var_name" ] && continue
+      group_suffix="${var_name#LDAP_GROUP_}"
+      [ -z "$group_suffix" ] && continue
+      g_lower=$(echo "$group_suffix" | tr '[:upper:]' '[:lower:]')
+      if [ -z "${groups_map[$g_lower]:-}" ]; then
+        groups_order+=("$g_lower")
+        groups_map[$g_lower]=1
+      fi
+    done < <(compgen -v LDAP_GROUP_ 2>/dev/null || env | grep -E '^LDAP_GROUP_[a-zA-Z0-9_]+=' | cut -d= -f1 | sort -u)
+
+    # 3. Process each group and its users
+    for g in "${groups_order[@]}"; do
+      g_upper=$(echo "$g" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+      var_users="LDAP_USERS_${g_upper}"
+      var_group="LDAP_GROUP_${g_upper}"
+
+      users_str_1="${!var_users:-}"
+      users_str_2="${!var_group:-}"
+
+      users_str=""
+      if [ -n "$users_str_1" ] && [ -n "$users_str_2" ]; then
+        users_str="${users_str_1},${users_str_2}"
+      elif [ -n "$users_str_1" ]; then
+        users_str="$users_str_1"
       else
-        password="$DEFAULT_USER_PASSWORD"
-        IFS=' ' read -r given_name sn <<< "$user"
+        users_str="$users_str_2"
       fi
 
-      uid=$(echo "${given_name:0:1}${sn}" | tr '[:upper:]' '[:lower:]')
-      generate_user_entry "$uid" "$given_name" "$sn" "$password" > "/tmp/users/${uid}.ldif"
-      echo "uniqueMember: uid=${uid},ou=users,${LDAP_ROOT}"
+      echo "# group: ${g}"
+      echo "dn: cn=${g},ou=groups,${LDAP_ROOT}"
+      echo "objectClass: groupOfUniqueNames"
+      echo "cn: ${g}"
+
+      declare -A seen_members_in_group
+      IFS=',' read -r -a user_array <<< "$users_str"
+      for user in "${user_array[@]}"; do
+        user="${user#"${user%%[![:space:]]*}"}"
+        user="${user%"${user##*[![:space:]]}"}"
+        [ -z "$user" ] && continue
+
+        uid=$(process_user "$user")
+        if [ -n "$uid" ] && [ -z "${seen_members_in_group[$uid]:-}" ]; then
+          echo "uniqueMember: uid=${uid},ou=users,${LDAP_ROOT}"
+          seen_members_in_group[$uid]=1
+        fi
+      done
+      unset seen_members_in_group
+      echo ""
     done
-    echo ""
-  done
+  fi
 } > /tmp/structure.ldif
 
 # Concatenate structure + all user entries into the final LDIF
-cat /tmp/structure.ldif /tmp/users/*.ldif > "$GENERATED_LDIF"
+if compgen -G "/tmp/users/*.ldif" > /dev/null 2>&1; then
+  cat /tmp/structure.ldif /tmp/users/*.ldif > "$GENERATED_LDIF"
+else
+  cat /tmp/structure.ldif > "$GENERATED_LDIF"
+fi
 echo "==> LDIF generated: ${GENERATED_LDIF}"
 
 # ── Step 3: Bootstrap slapd if needed ────────────────────────────────────────
