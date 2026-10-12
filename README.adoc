@@ -4,7 +4,7 @@
 
 OpenLDAP Docker container for demo purposes.
 
-Based on https://hub.docker.com/r/bitnami/openldap/[Bitnami Docker Image for OpenLDAP].
+Based on https://catalog.redhat.com/software/containers/ubi9/ubi/615bcf606feffc5384e8452e[Red Hat UBI 9.8] with https://docs.fedoraproject.org/en-US/epel/[EPEL 9] providing `openldap-servers`.
 
 == Use case
 
@@ -14,11 +14,11 @@ Occasionally I have a need to have LDAP server with groups and users. That's why
 
 * Get Docker image:
 ```
-podman pull kazhar/openldap-demo
+podman pull docker.io/kazhar/openldap-demo:latest
 ```
 * Run Docker image: 
 ```
-podman run -d -p 389:1389 -p 636:1636 --name openldap-demo kazhar/openldap-demo
+podman run -d -p 389:1389 -p 636:1636 --name openldap-demo docker.io/kazhar/openldap-demo:latest
 ```
 * Login to server:
 ** Base DN: `dc=sirius,dc=com`
@@ -31,18 +31,26 @@ Or you can download/clone this repo and create and build your own OpenLDAP image
 
 * Add group _staff_ and some users.
 ```
-podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e ADDITIONAL_LDAP_USERS_AND_GROUPS="staff:Ulysses Ser1, Uma Ser2, Uriel Ser3, Ulrich Ser4, Ursula Ser5, Upton Ser6, Uriah Ser7, Uliana Ser8, Ulma Ser9, Ulric Ser10" kazhar/openldap-demo
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e ADDITIONAL_LDAP_USERS_AND_GROUPS="staff:Ulysses Ser1, Uma Ser2, Uriel Ser3, Ulrich Ser4, Ursula Ser5, Upton Ser6, Uriah Ser7, Uliana Ser8, Ulma Ser9, Ulric Ser10" docker.io/kazhar/openldap-demo:latest
 ```
 
 * Add your own organization, domain and create new self-signed certificates.
 
 ```
-podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e LDAP_DOMAIN=wayne.net -e LDAP_ROOT="dc=wayne,dc=net" -e LDAP_ORGANIZATION="Wayne Machines" -e CREATE_CERTS=true kazhar/openldap-demo
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -e LDAP_DOMAIN=wayne.net -e LDAP_ROOT="dc=wayne,dc=net" -e LDAP_ORGANIZATION="Wayne Machines" -e CREATE_CERTS=true docker.io/kazhar/openldap-demo:latest
 ```
 
 * Add your own certificate
 ```
-podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.crt:/certs/ldap.crt:z -v /tmp_crt/ldap.key:/certs/ldap.key:z -v /tmp/tmp_crt/ca.crt:/certs/ca.crt:z  kazhar/openldap-demo
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.crt:/certs/ldap.crt:z -v /tmp_crt/ldap.key:/certs/ldap.key:z -v /tmp/tmp_crt/ca.crt:/certs/ca.crt:z  docker.io/kazhar/openldap-demo:latest
+```
+
+* Run with persistence (data survives container restarts):
+```
+podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
+  -e LDAP_PERSIST=true \
+  -v openldap-data:/var/lib/openldap/data:z \
+  docker.io/kazhar/openldap-demo:latest
 ```
 
 
@@ -80,6 +88,10 @@ podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.c
 |
 |Additional list of users and groups. Added after _LDAP_USERS_AND_GROUPS_.
 
+|LDAP_PERSIST
+|
+|Set to `true` to skip re-initialisation if data already exists in the data volume. Use together with a persistent volume mounted at `/var/lib/openldap/data`.
+
 |CREATE_CERTS
 |
 |Set to `true` to generated fresh self-signed certificates.
@@ -92,6 +104,9 @@ podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap -v /tmp_crt/ldap.c
 |
 |Space separated list of IP addresses, added to self-signed certificate.
 
+|LDAP_LOGLEVEL
+|256
+|OpenLDAP log level. See https://www.openldap.org/doc/admin24/slapdconf2.html for levels.
 
 |===
 
@@ -295,7 +310,7 @@ podman build -t my-openldap .
 ```
 * Start:
 ```
-podman run -it --rm -p 389:1389 -p 636:1636 --name my-openldap my-openldap
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name my-openldap my-openldap
 ```
 
 == Certificate
@@ -312,14 +327,31 @@ IP: 127.0.0.1
 
 When starting the container, set `-e CREATE_CERTS=true` to create fresh self-signed certificates.
 
-If you have existing certificates (for example, Let’s Encrypt certs), add them as volumes when starting the container:
+If you have existing certificates (for example, Let's Encrypt certs), add them as volumes when starting the container:
 
 ```
-podman run -it --rm -p 389:1389 -p 636:1636 --name openldap-demo -v /my-certs/privkey1.pem:/certs/ldap.key:z -v /my-certs/cert1.pem:/certs/ldap.crt:z -v /my-certs/ca.crt:/certs/ca.crt:z kazhar/openldap-demo
+podman run -it --rm -p 1389:1389 -p 1636:1636 --name openldap-demo -v /my-certs/privkey1.pem:/certs/ldap.key:z -v /my-certs/cert1.pem:/certs/ldap.crt:z -v /my-certs/ca.crt:/certs/ca.crt:z docker.io/kazhar/openldap-demo:latest
 ```
 
 * -v option maps file to file.
 
+== Persistence
+
+By default the container initialises a fresh database on every start. To retain data across container restarts:
+
+. Mount a volume at `/var/lib/openldap/data`.
+. Set `LDAP_PERSIST=true`.
+
+When `LDAP_PERSIST=true` and the data directory already contains an existing database, the entrypoint skips re-initialisation and starts slapd directly against the existing data.
+
+```
+podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
+  -e LDAP_PERSIST=true \
+  -v openldap-data:/var/lib/openldap/data:z \
+  docker.io/kazhar/openldap-demo:latest
+```
+
+NOTE: On the very first run with a new empty volume, initialisation always runs regardless of `LDAP_PERSIST`.
 
 == Scripts
 

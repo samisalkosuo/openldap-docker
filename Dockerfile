@@ -1,57 +1,95 @@
-#Create OpenLDAP image
+# OpenLDAP demo container
+# Based on Red Hat UBI 9.8 with openldap-servers from EPEL 9
 
-#based on bitnami image https://hub.docker.com/r/bitnami/openldap
-FROM docker.io/bitnami/openldap:2.6.8
+FROM registry.access.redhat.com/ubi9/ubi:9.8
 
-#domain to be used in LDIF
-ENV LDAP_DOMAIN sirius.com
-#base dn, mandatory, must reflect domain
-ENV LDAP_ROOT dc=sirius,dc=com
-#organization name/description, could be company name
-ENV LDAP_ORGANIZATION "Sirius Cybernetics Corporation"
-#admin user password, user name is 'admin'
-ENV LDAP_ADMIN_PASSWORD passw0rd
-#default password for all users
-ENV DEFAULT_USER_PASSWORD passw0rd
-ENV LDAP_USERS_AND_GROUPS "admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
+# ── Domain / base DN ─────────────────────────────────────────────────────────
+ENV LDAP_DOMAIN=sirius.com
+ENV LDAP_ROOT=dc=sirius,dc=com
+ENV LDAP_ORGANIZATION="Sirius Cybernetics Corporation"
 
-ENV LDAP_ALLOW_ANON_BINDING no
-#OpenLDAP log level
-#see https://www.openldap.org/doc/admin24/slapdconf2.html for levels
-ENV LDAP_LOGLEVEL 256
-#default port numbers
-ENV LDAP_PORT_NUMBER=1389
-ENV LDAP_LDAPS_PORT_NUMBER=1636
+# ── Credentials ──────────────────────────────────────────────────────────────
+ENV LDAP_ADMIN_PASSWORD=passw0rd
+ENV DEFAULT_USER_PASSWORD=passw0rd
 
-#TLS config
-ENV LDAP_ENABLE_TLS yes
-ENV LDAP_TLS_CERT_FILE /certs/ldap.crt
-ENV LDAP_TLS_KEY_FILE  /certs/ldap.key
-ENV LDAP_TLS_CA_FILE /certs/ca.crt
+# ── Default users and groups ─────────────────────────────────────────────────
+ENV LDAP_USERS_AND_GROUPS="admin:Kiara Doyle,Zac Fraser,Andre Shaw,Daniella Wells;research:Olivia Berry,Oscar Davis,Amelia Lawson,Jonah Stone;operations:Tom Foster,Cara Hawkins,Natalia Matthews,George Watts;marketing:Hilary Banks=hilary,Mallory Keaton=mkeaton,Ed Norton=pwd,Michael Scott=scott"
 
-#copy OpenLDAP config LDIF
-COPY config/overlays.ldif /schemas/
+# ── Runtime tuning ───────────────────────────────────────────────────────────
+# OpenLDAP log level - see https://www.openldap.org/doc/admin24/slapdconf2.html
+ENV LDAP_LOGLEVEL=256
+
+# ── TLS certificate paths ─────────────────────────────────────────────────────
+ENV LDAP_TLS_CERT_FILE=/certs/ldap.crt
+ENV LDAP_TLS_KEY_FILE=/certs/ldap.key
+ENV LDAP_TLS_CA_FILE=/certs/ca.crt
+
+# ── Persistence (set to "true" to skip re-init when data directory is not empty) ──
+ENV LDAP_PERSIST=
+
+# ── Install EPEL 9 and openldap-servers ──────────────────────────────────────
+RUN dnf install -y \
+        https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+    dnf install -y \
+        openldap-servers \
+        openssl && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
+
+# ── Prepare directory structure ───────────────────────────────────────────────
+RUN mkdir -p \
+        /certs \
+        /ldifs \
+        /schemas \
+        /var/lib/openldap/data \
+        /etc/openldap/slapd.d && \
+    # OpenShift runs containers with arbitrary UIDs that belong to GID 0.
+    # chmod g=u ensures those UIDs can write to the same paths as the owner.
+    chown -R 1001:0 \
+        /certs \
+        /ldifs \
+        /schemas \
+        /var/lib/openldap \
+        /etc/openldap && \
+    chmod -R g=u \
+        /certs \
+        /ldifs \
+        /schemas \
+        /var/lib/openldap \
+        /etc/openldap
+
+# ── Copy cert tooling and build-time cert generation ─────────────────────────
+COPY certs/ /certs/
 
 USER root
-
-COPY certs/ /certs/
 RUN bash /certs/prepare-certs.sh && \
     mv /tmp/certificate.crt /certs/ldap.crt && \
     mv /tmp/certificate.key /certs/ldap.key && \
-    mv /tmp/ca.crt /certs/ca.crt && \
+    mv /tmp/ca.crt          /certs/ca.crt   && \
     rm -f /tmp/*.txt /tmp/*.csr /tmp/*.crt /tmp/*.key && \
-    chown -R 1001 /certs/ && \
-    chmod 644 /certs/* && \
-    chmod -R 755 /schemas/
+    chown 1001:0 /certs/ldap.crt /certs/ldap.key /certs/ca.crt && \
+    chmod g=u    /certs/ldap.crt /certs/ldap.key /certs/ca.crt
 
-WORKDIR /
+# ── Copy config files ─────────────────────────────────────────────────────────
+# slapd.conf template (substituted at runtime by entrypoint)
+COPY config/slapd.conf /etc/openldap/slapd.conf.tmpl
+# overlays LDIF (loaded into cn=config at runtime)
+COPY config/overlays.ldif /schemas/overlays.ldif
 
-#copy setup script
-COPY setup-container.sh ./
-#create dirs, copy certs and add setup script to container entrypoint script
-RUN mkdir -p /ldifs && \
-    chown -R 1001 /ldifs/ && \
-    cp /opt/bitnami/scripts/openldap/entrypoint.sh tmpentrypoint.sh && \
-    cat setup-container.sh tmpentrypoint.sh > /opt/bitnami/scripts/openldap/entrypoint.sh
+RUN chown 1001:0 /etc/openldap/slapd.conf.tmpl /schemas/overlays.ldif && \
+    chmod g=u    /etc/openldap/slapd.conf.tmpl /schemas/overlays.ldif
 
+# ── Copy and wire up the entrypoint ──────────────────────────────────────────
+COPY setup-container.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# ── Runtime user ─────────────────────────────────────────────────────────────
 USER 1001
+
+# ── Ports ─────────────────────────────────────────────────────────────────────
+EXPOSE 1389 1636
+
+# ── Volume for optional persistence ───────────────────────────────────────────
+VOLUME /var/lib/openldap/data
+
+ENTRYPOINT ["/entrypoint.sh"]
