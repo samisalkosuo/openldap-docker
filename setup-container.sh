@@ -15,6 +15,8 @@ LDAP_PERSIST="${LDAP_PERSIST:-}"
 CREATE_CERTS="${CREATE_CERTS:-}"
 SANS="${SANS:-}"
 IP_SANS="${IP_SANS:-}"
+ENABLE_HTTP_SERVICE="${ENABLE_HTTP_SERVICE:-false}"
+HTTP_PORT="${HTTP_PORT:-8080}"
 
 # Legacy group and user configuration (kept for backward compatibility)
 LDAP_USERS_AND_GROUPS="${LDAP_USERS_AND_GROUPS:-}"
@@ -285,7 +287,14 @@ else
   echo "==> Overlays loaded."
 fi
 
-# ── Step 4: Start slapd ───────────────────────────────────────────────────────
+# ── Step 4: Start optional HTTP browser service ──────────────────────────────
+if [ "$ENABLE_HTTP_SERVICE" = "true" ] || [ "$ENABLE_HTTP_SERVICE" = "1" ] || [ "$ENABLE_HTTP_SERVICE" = "yes" ]; then
+  HTTP_PORT="${HTTP_PORT:-8080}"
+  echo "==> Starting LDAP HTTP browser service on port ${HTTP_PORT}..."
+  python3 /scripts/ldap_tool.py serve --port "${HTTP_PORT}" &
+fi
+
+# ── Step 5: Start slapd ───────────────────────────────────────────────────────
 echo "==> Starting slapd on ldap://:1389 ldaps://:1636 ..."
 exec slapd -F "$SLAPD_CONFIG_DIR" \
            -h "ldap://:1389 ldaps://:1636" \

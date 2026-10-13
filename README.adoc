@@ -53,6 +53,14 @@ podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
   docker.io/kazhar/openldap-demo:latest
 ```
 
+* Run with lightweight HTTP browser enabled (Web UI + curl):
+```
+podman run -d -p 1389:1389 -p 1636:1636 -p 8080:8080 \
+  -e ENABLE_HTTP_SERVICE=true \
+  --name openldap \
+  docker.io/kazhar/openldap-demo:latest
+```
+
 
 === Environment variables
 
@@ -119,6 +127,14 @@ podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
 |LDAP_LOGLEVEL
 |256
 |OpenLDAP log level. See https://www.openldap.org/doc/admin24/slapdconf2.html for levels.
+
+|ENABLE_HTTP_SERVICE
+|`false`
+|Set to `true` to enable the built-in lightweight read-only HTTP directory browser service on port 8080.
+
+|HTTP_PORT
+|`8080`
+|Port on which the HTTP browser service listens.
 
 |===
 
@@ -396,9 +412,127 @@ podman run -d -p 1389:1389 -p 1636:1636 --name openldap \
 
 NOTE: On the very first run with a new empty volume, initialisation always runs regardless of `LDAP_PERSIST`.
 
-== Scripts
+== Lightweight LDAP Browser (Web UI & curl)
 
-link:scripts/[scripts]-directory includes some scripts that can be used to search LDAP by userid, last name, package files for offline distribution and others.
+A lightweight, zero-dependency Python service (compatible with Python 3.9+) is embedded in the container for read-only directory browsing. It is disabled by default and can be enabled with `-e ENABLE_HTTP_SERVICE=true`.
+
+=== Browser Access
+
+Open your web browser and navigate to:
+
+```
+http://localhost:8080/
+```
+
+Key features:
+* **Users view**: List of all users with search filtering, emails, and group memberships.
+* **Groups view**: List of all groups and their assigned members.
+* **Search**: Real-time search across UIDs, full names, emails, and group names.
+* **Detail pages**: Click any user or group to view its full attributes and DN.
+
+=== Terminal / curl Access
+
+When accessed with `curl`, `wget`, or any plain-text client, the service automatically formats the directory entries into clean, readable terminal tables:
+
+* Discover available endpoints and usage help:
+```bash
+curl http://localhost:8080/
+# or
+curl http://localhost:8080/help
+```
+
+* List all users:
+```bash
+curl http://localhost:8080/users
+```
+
+* List all groups and members:
+```bash
+curl http://localhost:8080/groups
+```
+
+* Search across the directory:
+```bash
+curl http://localhost:8080/search?q=doyle
+```
+
+* View specific user or group:
+```bash
+curl http://localhost:8080/user?uid=kdoyle
+curl http://localhost:8080/group?cn=admin
+```
+
+* JSON API format:
+Append `?format=json` (or set `Accept: application/json` header) to any endpoint:
+```bash
+curl -s http://localhost:8080/users?format=json
+```
+
+== LDAP CLI Tool & Scripts
+
+All helper scripts and a unified Python CLI tool are included in the container image under `/scripts` (and symlinked to `/usr/local/bin/ldap-tool`), and can also be run directly from the host.
+
+=== Unified Python CLI (`ldap-tool` / `scripts/ldap_tool.py`)
+
+The unified CLI tool requires only Python 3.9+ standard library and standard OpenLDAP clients (`ldapsearch`, `ldapadd`, etc.).
+
+==== Running Inside Container
+
+```bash
+# List all users
+podman exec -it openldap ldap-tool list-users
+
+# List all groups and member counts
+podman exec -it openldap ldap-tool list-groups
+
+# Search user by UID, name, or email
+podman exec -it openldap ldap-tool search-user kdoyle
+
+# Search group by name
+podman exec -it openldap ldap-tool search-group admin
+
+# Search anything
+podman exec -it openldap ldap-tool search "Berry"
+
+# Add a new user
+podman exec -it openldap ldap-tool add-user "Alice" "Smith" "secret123" --group "research"
+
+# Add an existing user to a group
+podman exec -it openldap ldap-tool add-to-group asmith admin
+
+# Delete an entry by DN
+podman exec -it openldap ldap-tool delete-dn "uid=asmith,ou=users,dc=sirius,dc=com"
+
+# JSON output for scripting: add --json
+podman exec -it openldap ldap-tool list-users --json
+```
+
+==== Running on Host
+
+On your host machine, ensure `scripts/variables.env` contains your connection parameters:
+
+```bash
+# List users
+python3 scripts/ldap_tool.py list-users
+
+# Search user
+python3 scripts/ldap_tool.py search-user kdoyle
+
+# Start standalone HTTP server on host
+python3 scripts/ldap_tool.py serve --port 8080
+```
+
+=== Individual Shell Scripts
+
+For simple one-off tasks, individual shell scripts are also available in `scripts/`:
+
+* `search_by_user_id.sh <uid>`: Search user by UID
+* `search_by_common_name.sh <cn>`: Search user by common name
+* `search_by_last_name.sh <sn>`: Search user by surname
+* `search_by_group_name.sh <group>`: Search group by CN
+* `add_user.sh <first_name> <last_name> <password>`: Create a new user
+* `add_user_to_group.sh <uid> <group>`: Add user to a group
+* `delete_dn.sh <dn>`: Delete an LDAP DN
 
 == OpenShift
 

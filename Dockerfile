@@ -35,11 +35,17 @@ ENV LDAP_TLS_CA_FILE=/certs/ca.crt
 # ── Persistence (set to "true" to skip re-init when data directory is not empty) ──
 ENV LDAP_PERSIST=
 
-# ── Install EPEL 9 and openldap-servers ──────────────────────────────────────
+# ── HTTP Browser Service (disabled by default) ────────────────────────────────
+ENV ENABLE_HTTP_SERVICE=false
+ENV HTTP_PORT=8080
+
+# ── Install EPEL 9, openldap-servers, clients and python3 ────────────────────
 RUN dnf install -y \
         https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf install -y \
         openldap-servers \
+        openldap-clients \
+        python3 \
         openssl && \
     dnf clean all && \
     rm -rf /var/cache/dnf
@@ -49,6 +55,7 @@ RUN mkdir -p \
         /certs \
         /ldifs \
         /schemas \
+        /scripts \
         /var/lib/openldap/data \
         /etc/openldap/slapd.d && \
     # OpenShift runs containers with arbitrary UIDs that belong to GID 0.
@@ -57,12 +64,14 @@ RUN mkdir -p \
         /certs \
         /ldifs \
         /schemas \
+        /scripts \
         /var/lib/openldap \
         /etc/openldap && \
     chmod -R g=u \
         /certs \
         /ldifs \
         /schemas \
+        /scripts \
         /var/lib/openldap \
         /etc/openldap
 
@@ -87,6 +96,14 @@ COPY config/overlays.ldif /schemas/overlays.ldif
 RUN chown 1001:0 /etc/openldap/slapd.conf.tmpl /schemas/overlays.ldif && \
     chmod g=u    /etc/openldap/slapd.conf.tmpl /schemas/overlays.ldif
 
+# ── Copy CLI scripts and tool ────────────────────────────────────────────────
+COPY scripts/ /scripts/
+RUN chmod -R +x /scripts && \
+    ln -sf /scripts/ldap_tool.py /usr/local/bin/ldap-tool && \
+    ln -sf /scripts/ldap_tool.py /usr/local/bin/ldap_tool.py && \
+    chown -R 1001:0 /scripts && \
+    chmod -R g=u /scripts
+
 # ── Copy and wire up the entrypoint ──────────────────────────────────────────
 COPY setup-container.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -95,7 +112,7 @@ RUN chmod +x /entrypoint.sh
 USER 1001
 
 # ── Ports ─────────────────────────────────────────────────────────────────────
-EXPOSE 1389 1636
+EXPOSE 1389 1636 8080
 
 # ── Volume for optional persistence ───────────────────────────────────────────
 VOLUME /var/lib/openldap/data
