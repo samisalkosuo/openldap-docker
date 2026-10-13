@@ -1,4 +1,5 @@
 local/
+__pycache__/
 .vscode
 generated*
 Dockerfile.generated
